@@ -1,0 +1,137 @@
+export type LanguageCode = 'en' | 'vi';
+
+export interface LanguageContent {
+    // Header
+    appName: string;
+    searchPlaceholder: string;
+    user: string;
+
+    // Sidebar
+    home: string;
+    movies: string;
+    tvShows: string;
+    music: string;
+    photos: string;
+    settings: string;
+
+    // Hero Section
+    welcomeBack: string;
+    continueWatchingPrompt: string;
+
+    // Content Rows
+    continueWatching: string;
+    recentlyAdded: string;
+    viewAll: string;
+    new: string;
+
+    // Time indicators
+    daysAgo: (days: number) => string;
+    hoursAgo: (hours: number) => string;
+    justNow: string;
+
+    // Footer
+    copyright: (year: number) => string;
+    about: string;
+    privacy: string;
+    terms: string;
+
+    // Movie Detail Modal
+    play: string;
+    close: string;
+    cast: string;
+    episodes: string;
+}
+
+export const EN: LanguageContent = {
+    // Header
+    appName: 'NETTUBE',
+    searchPlaceholder: 'Search...',
+    user: 'User',
+
+    // Sidebar
+    home: 'Home',
+    movies: 'Movies',
+    tvShows: 'TV Shows',
+    music: 'Music',
+    photos: 'Photos',
+    settings: 'Settings',
+
+    // Hero Section
+    welcomeBack: 'Welcome back',
+    continueWatchingPrompt: 'Continue watching where you left off',
+
+    // Content Rows
+    continueWatching: 'Continue Watching',
+    recentlyAdded: 'Recently Added',
+    viewAll: 'View All',
+    new: 'New',
+
+    // Time indicators
+    daysAgo: (days) => `${days} days ago`,
+    hoursAgo: (hours) => `${hours} hours ago`,
+    justNow: 'Just now',
+
+    // Footer
+    copyright: (year) => `© ${year} NETTUBE`,
+    about: 'About',
+    privacy: 'Privacy',
+    terms: 'Terms',
+
+    // Movie Detail Modal
+    play: 'Play',
+    close: 'Close',
+    cast: 'Cast',
+    episodes: 'Episodes',
+};
+
+export const VI: LanguageContent = {
+    // Header
+    appName: 'NETTUBE',
+    searchPlaceholder: 'Tìm kiếm...',
+    user: 'Người dùng',
+
+    // Sidebar
+    home: 'Trang chủ',
+    movies: 'Phim',
+    tvShows: 'Chương trình TV',
+    music: 'Âm nhạc',
+    photos: 'Hình ảnh',
+    settings: 'Cài đặt',
+
+    // Hero Section
+    welcomeBack: 'Chào mừng trở lại',
+    continueWatchingPrompt: 'Tiếp tục xem từ nơi bạn đã dừng',
+
+    // Content Rows
+    continueWatching: 'Đang xem',
+    recentlyAdded: 'Mới thêm gần đây',
+    viewAll: 'Xem tất cả',
+    new: 'Mới',
+
+    // Time indicators
+    daysAgo: (days) => `${days} ngày trước`,
+    hoursAgo: (hours) => `${hours} giờ trước`,
+    justNow: 'Vừa mới đây',
+
+    // Footer
+    copyright: (year) => `© ${year} NETTUBE`,
+    about: 'Giới thiệu',
+    privacy: 'Quyền riêng tư',
+    terms: 'Điều khoản',
+
+    // Movie Detail Modal
+    play: 'Phát',
+    close: 'Đóng',
+    cast: 'Diễn viên',
+    episodes: 'Tập phim',
+};
+
+export const LANGUAGES = {
+    en: EN,
+    vi: VI,
+};
+
+export const LANGUAGE_NAMES = {
+    en: 'English',
+    vi: 'Tiếng Việt',
+};
