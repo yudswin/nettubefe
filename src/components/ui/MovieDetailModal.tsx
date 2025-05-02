@@ -59,7 +59,7 @@ const MovieDetailModal = ({ movie, isOpen, onClose, onPlay }: MovieDetailModalPr
             className="modal modal-bottom sm:modal-middle"
             onClick={handleBackdropClick}
         >
-            <div className="modal-box bg-gray-900 max-w-4xl w-full p-0 rounded-lg">
+            <div className="modal-box bg-gray-900 max-w-6xl w-full p-0 rounded-lg">
                 {/* Cover section */}
                 <div
                     className="h-72 bg-cover bg-center relative"
@@ -131,7 +131,7 @@ const MovieDetailModal = ({ movie, isOpen, onClose, onPlay }: MovieDetailModalPr
                     {movie.episodes && movie.episodes.length > 0 && (
                         <div>
                             <h3 className="text-xl font-bold mb-3">{t.episodes}</h3>
-                            <div className="space-y-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 {movie.episodes.map(episode => (
                                     <div
                                         key={episode.id}
