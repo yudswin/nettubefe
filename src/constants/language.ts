@@ -5,6 +5,7 @@ export interface LanguageContent {
     appName: string;
     searchPlaceholder: string;
     user: string;
+    authTitle: string;
 
     // Sidebar
     home: string;
@@ -40,6 +41,21 @@ export interface LanguageContent {
     close: string;
     cast: string;
     episodes: string;
+
+    // Auth Detail Model
+    signInTitle: string;
+    signInChange: string;
+    signInButton: string;
+    signIn_email: string;
+    signIn_password: string;
+
+    signUpTitle: string;
+    signUpChange: string;
+    signUpButton: string;
+    signUp_name: string;
+    signUp_email: string;
+    signUp_password: string;
+    signUp_repassword: string;
 }
 
 export const EN: LanguageContent = {
@@ -47,6 +63,7 @@ export const EN: LanguageContent = {
     appName: 'NETTUBE',
     searchPlaceholder: 'Search...',
     user: 'User',
+    authTitle: 'Member',
 
     // Sidebar
     home: 'Home',
@@ -82,6 +99,21 @@ export const EN: LanguageContent = {
     close: 'Close',
     cast: 'Cast',
     episodes: 'Episodes',
+
+    // Auth Detail Model
+    signInTitle: 'Sign In',
+    signInChange: "Don't have an account? ",
+    signInButton: 'Sign In',
+    signIn_email: 'Enter email',
+    signIn_password: 'Enter password',
+
+    signUpTitle: 'Create Account',
+    signUpChange: 'Already have an account? ',
+    signUpButton: 'Sign Up',
+    signUp_name: 'Enter your display name',
+    signUp_email: 'Enter your email',
+    signUp_password: 'Enter the password',
+    signUp_repassword: 'Re-enter your password',
 };
 
 export const VI: LanguageContent = {
@@ -89,6 +121,7 @@ export const VI: LanguageContent = {
     appName: 'NETTUBE',
     searchPlaceholder: 'Tìm kiếm...',
     user: 'Người dùng',
+    authTitle: 'Thành viên',
 
     // Sidebar
     home: 'Trang chủ',
@@ -124,6 +157,21 @@ export const VI: LanguageContent = {
     close: 'Đóng',
     cast: 'Diễn viên',
     episodes: 'Tập phim',
+
+    // Auth Detail Model
+    signInTitle: 'Đăng Nhập',
+    signInChange: "Bạn chưa có tài khoản? ",
+    signInButton: 'Đăng nhập',
+    signIn_email: 'Hãy điền Email đăng nhập',
+    signIn_password: 'Mật khẩu',
+
+    signUpTitle: 'Tạo Tài Khoản Mới',
+    signUpChange: 'Đã đăng ký tài khoản? ',
+    signUpButton: 'Tạo tài khoản',
+    signUp_name: 'Hãy nhập tên hiển thị',
+    signUp_email: 'Hãy nhập địa chỉ email',
+    signUp_password: 'Mật khẩu',
+    signUp_repassword: 'Nhập lại Mật khẩu',
 };
 
 export const LANGUAGES = {

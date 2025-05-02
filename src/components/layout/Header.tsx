@@ -1,5 +1,7 @@
 import LanguageSwitcher from '../ui/LanguageSwitcher'
 import { useLanguage } from '../../contexts/LanguageContext'
+import { useState } from 'react';
+import AuthModel from '../ui/AuthModel';
 
 interface HeaderProps {
     toggleSidebar: () => void;
@@ -8,11 +10,21 @@ interface HeaderProps {
 
 const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
     const { t } = useLanguage();
-    
+    const [modalOpen, setModalOpen] = useState(false);
+    const [isAuth, setAuth] = useState(false);
+
+    const handleCardClick = () => {
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
+
     return (
         <header className="fixed top-0 left-0 right-0 flex justify-between items-center py-4 px-4 md:px-8 bg-gray-950 h-16 border-b border-gray-800 z-30">
             {/* Mobile sidebar toggle */}
-            <button 
+            <button
                 onClick={toggleSidebar}
                 className="md:hidden text-white p-2"
                 aria-label="Toggle sidebar"
@@ -27,7 +39,7 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
                     </svg>
                 )}
             </button>
-            
+
             {/* App name */}
             <div className="text-2xl font-bold text-amber-500">{t.appName}</div>
 
@@ -46,14 +58,33 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
             {/* Right section with language and user */}
             <div className="flex items-center">
                 <LanguageSwitcher />
-                
+
                 {/* User profile (hidden on mobile) */}
-                <div className="hidden md:flex items-center ml-4">
-                    <span>{t.user}</span>
-                    <div className="w-8 h-8 ml-2 bg-gray-700 rounded-full flex items-center justify-center">
-                        👤
-                    </div>
-                </div>
+                {
+                    !isAuth ?
+                        // Auth Title
+                        <>
+                            <div className="hidden md:flex items-center ml-4">
+                                <button
+                                    onClick={handleCardClick}
+                                    className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
+                                >
+                                    <span>{t.authTitle}</span>
+                                    <div>
+                                        👤
+                                    </div>
+                                </button>
+                            </div>
+                            <AuthModel
+                                isOpen={modalOpen}
+                                onClose={handleCloseModal}
+                            />
+                        </>
+                        :  // Signed In
+                        <div className="hidden md:flex items-center ml-4">
+                            <span>{t.user}</span>
+                        </div>
+                }
             </div>
         </header>
     )
