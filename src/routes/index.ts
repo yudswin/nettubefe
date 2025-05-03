@@ -1,3 +1,4 @@
+import AdminContent from "@pages/contents/AdminContent";
 import home from "../pages/home"
 import user from "../pages/user"
 
@@ -14,6 +15,10 @@ const routes: RouteType[] = [
     {
         path: '/user',
         page: user
+    },
+    {
+        path: '/admin',
+        page: AdminContent
     }
 ]
 

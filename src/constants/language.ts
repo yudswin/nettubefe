@@ -65,6 +65,10 @@ export interface LanguageContent {
     passwordMismatch: string;
     registrationSuccess: string;
     registrationFailed: string;
+
+    // Tabs
+    tabAdmin: string;
+    tabSetting: string;
 }
 
 export const EN: LanguageContent = {
@@ -132,6 +136,10 @@ export const EN: LanguageContent = {
     passwordMismatch: 'Password is Wrong ',
     registrationSuccess: 'Register Success',
     registrationFailed: 'Register Falied ',
+    
+    // Tabs
+    tabAdmin: 'Admin',
+    tabSetting: 'Setting',
 };
 
 export const VI: LanguageContent = {
@@ -199,6 +207,10 @@ export const VI: LanguageContent = {
     passwordMismatch: 'Tài khoản và Mật khẩu không trùng khớp ',
     registrationSuccess: 'Đăng ký tài khoản Thành Công ',
     registrationFailed: 'Đăng ký tài khoản Thất Bại ',
+
+    // Tabs
+    tabAdmin: 'Admin',
+    tabSetting: 'Cài đặt',
 };
 
 export const LANGUAGES = {

@@ -57,7 +57,7 @@ export type InfoResponse = SuccessInfoResponse | ErrorResponse
 export const AuthService = {
     login: async (credentials: LoginCredentials): Promise<Response> => {
         try {
-            const response = await client.post('/user/auth/login', credentials);
+            const response = await client.post('api/user/auth/login', credentials);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

@@ -1,0 +1,71 @@
+import axios from 'axios';
+import client from './http/client';
+
+interface SuccessResponse<T> {
+    status: 'success';
+    msg: string;
+    result: T;
+}
+
+interface ErrorResponse {
+    status: 'failed';
+    msg: string;
+    error: string;
+    details?: {
+        error: string;
+        details: string;
+    };
+}
+
+export interface Content {
+    _id: string;
+    title: string;
+    thumbnailPath: string;
+    bannerPath?: string;
+    overview?: string;
+    imdbRating?: string;
+    runtime?: number;
+    releaseDate?: string;
+    year?: number;
+    type: 'movie' | 'tvshow';
+    status?: 'finish' | 'updating';
+    publish: boolean;
+}
+
+export type ContentListResponse = SuccessResponse<Content[]> | ErrorResponse;
+
+export const ContentService = {
+    getContentList: async (): Promise<ContentListResponse> => {
+        try {
+            const response = await client.get('/content/list');
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+    updateContent: async (id: string, data: Partial<Content>): Promise<ContentListResponse> => {
+        try {
+            const response = await client.patch(`/content/${id}`, data);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+    deleteContent: async (id: string): Promise<ContentListResponse> => {
+        try {
+            const response = await client.delete(`/content/${id}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    }
+};
