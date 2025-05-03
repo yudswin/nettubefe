@@ -5,13 +5,13 @@ const SignOutButton = () => {
     const { t } = useLanguage()
     const { logout } = useAuth();
 
-    const toggleLanguage = () => {
+    const toggleSignout = () => {
         logout()
     };
 
     return (
         <button
-            onClick={toggleLanguage}
+            onClick={toggleSignout}
             className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
         >
             <span>{t.logout}</span>

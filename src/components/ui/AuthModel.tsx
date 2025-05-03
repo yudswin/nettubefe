@@ -12,7 +12,7 @@ const AuthModel = ({ isOpen, onClose }: AuthModelProps) => {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const [isLogin, setIsLogin] = useState(true)
     const { t } = useLanguage();
-    
+
 
     useEffect(() => {
         const dialog = dialogRef.current;
@@ -46,9 +46,15 @@ const AuthModel = ({ isOpen, onClose }: AuthModelProps) => {
                                 </svg>
                             </button>
                             {isLogin ? (
-                                <SignInForm onSwitch={() => { setIsLogin(false) }} onComplete={() => onClose() } />
+                                <SignInForm onSwitch={() => setIsLogin(false)} onComplete={() => {
+                                    onClose()
+                                    window.location.reload();
+                                }} />
                             ) : (
-                                <SignUpForm onSwitch={() => setIsLogin(true)} onComplete={() => onClose()} />
+                                <SignUpForm onSwitch={() => setIsLogin(true)} onComplete={() => {
+                                    onClose()
+                                    window.location.reload();
+                                }} />
                             )}
                         </div>
                     </div>

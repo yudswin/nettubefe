@@ -5,13 +5,14 @@ import { useLanguage } from "@contexts/LanguageContext";
 import { AuthService } from "@services/auth.service";
 import { useState } from "react";
 
-interface SignOutProps {
-    onSwitch: () => void,
-    onComplete: () => void,
+interface SignUpProps {
+    onSwitch: () => void;
+    onComplete: () => void;
 }
 
-export const SignUpForm = ({ onSwitch, onComplete }: SignOutProps) => {
+export const SignUpForm = ({ onSwitch, onComplete }: SignUpProps) => {
     const { t } = useLanguage();
+    const { login, info } = useAuth();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
@@ -19,7 +20,6 @@ export const SignUpForm = ({ onSwitch, onComplete }: SignOutProps) => {
         password: '',
         confirmPassword: ''
     });
-    const { login, info } = useAuth()
 
     const [toast, setToast] = useState<{
         show: boolean;
@@ -27,49 +27,60 @@ export const SignUpForm = ({ onSwitch, onComplete }: SignOutProps) => {
         type: 'success' | 'error';
     }>({ show: false, message: '', type: 'success' });
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
         setToast(prev => ({ ...prev, show: false }));
-        const response = await AuthService.register(formData);
-        if (response.status === 'success' && response) {
+
+        if (formData.password !== formData.confirmPassword) {
             setToast({
                 show: true,
-                message: 'Register successful! Redirecting...',
-                type: 'success'
-            });
-            const response = await AuthService.login(formData);
-            if (response.status === 'success' && response) {
-                setToast({
-                    show: true,
-                    message: response.msg || 'Login successful! Redirecting...',
-                    type: 'success'
-                });
-                login({
-                    accessToken: response.details.accessToken,
-                    refreshToken: response.details.refreshToken
-                });
-                const getInfo = await AuthService.info();
-                if (getInfo.status === 'success' && getInfo) {
-                    info(getInfo.result.user)
-                    onComplete()
-                }
-            } else {
-                setToast({
-                    show: true,
-                    message: response.details.error || 'Login failed',
-                    type: 'error'
-                });
-            }
-            setLoading(false)
-        } else {
-            setToast({
-                show: true,
-                message: response.details.error || 'Register failed',
+                message: t.passwordMismatch,
                 type: 'error'
             });
+            return;
         }
-        setLoading(false);
+
+        try {
+            setLoading(true);
+            const registerResponse = await AuthService.register(formData);
+
+            if (registerResponse.status !== 'success') {
+                throw new Error(registerResponse.details.error || t.registrationFailed);
+            }
+
+            setToast({
+                show: true,
+                message: t.registrationSuccess,
+                type: 'success'
+            });
+
+            const loginResponse = await AuthService.login({
+                email: formData.email,
+                password: formData.password
+            });
+
+            if (loginResponse.status === 'success') {
+                login({
+                    accessToken: loginResponse.details.accessToken,
+                    refreshToken: loginResponse.details.refreshToken
+                });
+
+                const userInfo = await AuthService.info();
+                if (userInfo.status === 'success') {
+                    info(userInfo.result.user);
+                    onComplete();
+                }
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: t.genericError + error,
+                type: 'error'
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,50 +93,65 @@ export const SignUpForm = ({ onSwitch, onComplete }: SignOutProps) => {
     return (
         <div className="transition-all duration-300">
             {loading && <FullPageLoader />}
-            {toast.show && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    onClose={() => setToast(prev => ({ ...prev, show: false }))}
-                />
-            )}
+
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(prev => ({ ...prev, show: false }))}
+            />
+
             <h2 className="text-2xl font-bold mb-6 text-center">{t.signUpTitle}</h2>
+
             <form className="flex flex-col gap-4 items-center justify-center">
                 <input
                     type="email"
                     name="email"
+                    placeholder={t.signUp_email}
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder={t.signUp_email}
                     className="input input-bordered bg-gray-800 border-gray-700 text-white"
+                    required
                 />
+
                 <input
                     type="text"
                     name="name"
+                    placeholder={t.signUp_name}
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder={t.signUp_name}
                     className="input input-bordered bg-gray-800 border-gray-700 text-white"
+                    required
                 />
+
                 <input
                     type="password"
                     name="password"
+                    placeholder={t.signUp_password}
                     value={formData.password}
                     onChange={handleChange}
-                    placeholder={t.signUp_password}
                     className="input input-bordered bg-gray-800 border-gray-700 text-white"
+                    required
                 />
+
                 <input
                     type="password"
                     name="confirmPassword"
+                    placeholder={t.signUp_repassword}
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    placeholder={t.signUp_repassword}
                     className="input input-bordered bg-gray-800 border-gray-700 text-white"
+                    required
                 />
-                <button type="submit" onClick={handleSubmit} className="px-8 btn btn-primary bg-amber-500 hover:bg-amber-600 border-none">
+
+                <button
+                    type="submit"
+                    onClick={handleSubmit}
+                    className="px-8 btn btn-primary bg-amber-500 hover:bg-amber-600 border-none"
+                    disabled={loading}
+                >
                     {t.signUpButton}
                 </button>
+
                 <div className="text-center mt-4">
                     <span className="text-gray-400">{t.signUpChange}</span>
                     <button
@@ -140,4 +166,4 @@ export const SignUpForm = ({ onSwitch, onComplete }: SignOutProps) => {
             </form>
         </div>
     );
-}
+};

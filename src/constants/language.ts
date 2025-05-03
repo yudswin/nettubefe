@@ -57,6 +57,14 @@ export interface LanguageContent {
     signUp_email: string;
     signUp_password: string;
     signUp_repassword: string;
+
+    // Error
+    genericError: string;
+    networkError: string;
+    loginSuccess: string;
+    passwordMismatch: string;
+    registrationSuccess: string;
+    registrationFailed: string;
 }
 
 export const EN: LanguageContent = {
@@ -116,6 +124,14 @@ export const EN: LanguageContent = {
     signUp_email: 'Enter your email',
     signUp_password: 'Enter the password',
     signUp_repassword: 'Re-enter your password',
+
+    // Error
+    genericError: 'Interal Error Occurs ',
+    networkError: 'Network Error Occurs ',
+    loginSuccess: 'Login Success',
+    passwordMismatch: 'Password is Wrong ',
+    registrationSuccess: 'Register Success',
+    registrationFailed: 'Register Falied ',
 };
 
 export const VI: LanguageContent = {
@@ -175,6 +191,14 @@ export const VI: LanguageContent = {
     signUp_email: 'Hãy nhập địa chỉ email',
     signUp_password: 'Mật khẩu',
     signUp_repassword: 'Nhập lại Mật khẩu',
+    
+    // Error
+    genericError: 'Đã xảy ra lỗi ở server ',
+    networkError: 'Đã xảy ra lỗi kết nối ',
+    loginSuccess: 'Đăng nhập Thành Công ',
+    passwordMismatch: 'Tài khoản và Mật khẩu không trùng khớp ',
+    registrationSuccess: 'Đăng ký tài khoản Thành Công ',
+    registrationFailed: 'Đăng ký tài khoản Thất Bại ',
 };
 
 export const LANGUAGES = {
