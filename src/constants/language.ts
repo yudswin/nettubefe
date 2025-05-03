@@ -6,6 +6,7 @@ export interface LanguageContent {
     searchPlaceholder: string;
     user: string;
     authTitle: string;
+    logout: string;
 
     // Sidebar
     home: string;
@@ -64,6 +65,7 @@ export const EN: LanguageContent = {
     searchPlaceholder: 'Search...',
     user: 'User',
     authTitle: 'Member',
+    logout: 'Logout',
 
     // Sidebar
     home: 'Home',
@@ -122,6 +124,7 @@ export const VI: LanguageContent = {
     searchPlaceholder: 'Tìm kiếm...',
     user: 'Người dùng',
     authTitle: 'Thành viên',
+    logout: 'Đăng xuất',
 
     // Sidebar
     home: 'Trang chủ',

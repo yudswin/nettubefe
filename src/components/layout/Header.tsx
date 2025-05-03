@@ -1,7 +1,9 @@
 import LanguageSwitcher from '../ui/LanguageSwitcher'
 import { useLanguage } from '../../contexts/LanguageContext'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthModel from '../ui/AuthModel';
+import { useAuth } from '@contexts/AuthContext';
+import SignOutButton from '@components/ui/SignOutButton';
 
 interface HeaderProps {
     toggleSidebar: () => void;
@@ -11,7 +13,8 @@ interface HeaderProps {
 const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
     const { t } = useLanguage();
     const [modalOpen, setModalOpen] = useState(false);
-    const [isAuth, setAuth] = useState(false);
+    const [isAuth, setIsAuth] = useState(false)
+    const { user, isAuthenticated } = useAuth();
 
     const handleCardClick = () => {
         setModalOpen(true);
@@ -20,6 +23,11 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
     const handleCloseModal = () => {
         setModalOpen(false);
     };
+
+    useEffect(() => {
+        setIsAuth(isAuthenticated || !!user)
+    }, [isAuthenticated, user])
+
 
     return (
         <header className="fixed top-0 left-0 right-0 flex justify-between items-center py-4 px-4 md:px-8 bg-gray-950 h-16 border-b border-gray-800 z-30">
@@ -56,34 +64,38 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
             </div>
 
             {/* Right section with language and user */}
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
                 <LanguageSwitcher />
 
                 {/* User profile (hidden on mobile) */}
-                {
-                    !isAuth ?
-                        // Auth Title
-                        <>
-                            <div className="hidden md:flex items-center ml-4">
-                                <button
-                                    onClick={handleCardClick}
-                                    className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
-                                >
-                                    <span>{t.authTitle}</span>
-                                    <div>
-                                        👤
-                                    </div>
-                                </button>
-                            </div>
-                            <AuthModel
-                                isOpen={modalOpen}
-                                onClose={handleCloseModal}
-                            />
-                        </>
-                        :  // Signed In
+                {!isAuth ?
+                    // Auth Title
+                    <>
                         <div className="hidden md:flex items-center ml-4">
-                            <span>{t.user}</span>
+                            <button
+                                onClick={handleCardClick}
+                                className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
+                            >
+                                <span>{t.authTitle}</span>
+                                <div>
+                                    👤
+                                </div>
+                            </button>
                         </div>
+                        <AuthModel
+                            isOpen={modalOpen}
+                            onClose={handleCloseModal}
+                        />
+                    </>
+                    :  // Signed In
+                    <>
+                        <div className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md">
+                            <span>{ user?.name ? user.name : t.user}</span>
+                        </div>
+                        <div>
+                            <SignOutButton />
+                        </div>
+                    </>
                 }
             </div>
         </header>

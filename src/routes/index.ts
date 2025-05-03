@@ -1,4 +1,4 @@
-import home from "../pages/Home"
+import home from "../pages/home"
 import user from "../pages/user"
 
 export interface RouteType {

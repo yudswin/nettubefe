@@ -5,6 +5,7 @@ import Sidebar from '../components/layout/Sidebar'
 import { useState } from 'react'
 import { LanguageProvider } from '../contexts/LanguageContext'
 import { useLanguage } from '../contexts/LanguageContext'
+import { AuthProvider } from '@contexts/AuthContext'
 
 const HomeContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -59,9 +60,7 @@ const HomeContent = () => {
 
 const Home = () => {
     return (
-        <LanguageProvider>
-            <HomeContent />
-        </LanguageProvider>
+        <HomeContent />
     )
 }
 
