@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { FullPageLoader } from '@components/feedback/FullPageLoader';
 import { LoadingSpinner } from '@components/feedback/LoadingSpinner';
-import { Toast } from '@components/feedback/Toast';
 import MovieTab from './MovieTab';
+import PersonTab from './PersonTab';
 
 interface EntityTab {
     id: string;
@@ -11,14 +11,14 @@ interface EntityTab {
 
 const AdminContent = () => {
     // State management
-    const [activeEntity, setActiveEntity] = useState<string>('users');
+    const [activeEntity, setActiveEntity] = useState<string>('movie');
     const [isLoading, setIsLoading] = useState(false);
     const [isFullPageLoading, setIsFullPageLoading] = useState(false);
 
     const entities: EntityTab[] = [
         { id: 'movie', label: 'Content Management' },
         { id: 'users', label: 'User Management' },
-        { id: 'products', label: 'Product Catalog' },
+        { id: 'person', label: 'Person Management' },
         { id: 'orders', label: 'Order Tracking' }
     ];
 
@@ -71,7 +71,10 @@ const AdminContent = () => {
                     <MovieTab />
                 )}
 
-                {/* Add similar blocks for other entities */}
+                {activeEntity === 'person' && (
+                    <PersonTab />
+                )}
+
             </div>
         </div>
     );

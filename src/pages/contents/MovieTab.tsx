@@ -1,4 +1,3 @@
-// components/MediaTab.tsx
 import { useState, useEffect } from "react";
 import { FullPageLoader } from "@components/feedback/FullPageLoader";
 import { Toast } from "@components/feedback/Toast";

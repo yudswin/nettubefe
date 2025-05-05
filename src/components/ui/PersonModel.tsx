@@ -1,34 +1,26 @@
 import { useState, useEffect } from "react";
-import { ContentService } from "@services/content.service";
+import { PersonService } from "@services/person.service";
 import { FullPageLoader } from "@components/feedback/FullPageLoader";
 import { Toast } from "@components/feedback/Toast";
-import { Content } from "../../types/content";
+import { Person } from "../../types/person";
 
-export interface ContentDetailModalProps {
-    content: {
+export interface PersonDetailModelProps {
+    person: {
         _id: string;
-        title: string;
-        thumbnailPath: string;
-        bannerPath?: string;
-        overview?: string;
-        imdbRating?: string;
-        runtime?: number;
-        year?: number;
-        type: "movie" | "tvshow";
-        status?: "finish" | "updating";
-        publish: boolean;
+        name: string;
+        slug: string;
+        profilePath?: string;
     };
     isOpen: boolean;
     onClose: () => void;
     onDelete?: (deletedId: string) => void;
-    onUpdate?: (updatedContent: Content) => void;
+    onUpdate?: (updatedPerson: Person) => void;
 }
 
-const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentDetailModalProps) => {
-    // const { t } = useLanguage();
+const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDetailModelProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
-    const [formData, setFormData] = useState(content);
+    const [formData, setFormData] = useState(person);
     const [isLoading, setIsLoading] = useState(false);
     const [toast, setToast] = useState<{
         show: boolean;
@@ -37,29 +29,22 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
     }>({ show: false, message: '', type: 'success' });
 
     useEffect(() => {
-        setFormData(content);
+        setFormData(person);
         setIsEditing(false);
-    }, [content]);
+    }, [person]);
 
-    const formatRuntime = (minutes: number | undefined) => {
-        if (!minutes) return "";
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
-        return `${hours}h ${remainingMinutes}m`;
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'year' || name === 'runtime' ? Number(value) : value
+            [name]: value
         }));
     };
 
     const handleUpdate = async () => {
         try {
             setIsLoading(true);
-            const response = await ContentService.updateContent(formData._id, formData);
+            const response = await PersonService.updatePerson(formData._id, formData);
 
             if (response.status === 'success') {
                 setToast({ show: true, message: 'updateSuccess', type: 'success' });
@@ -75,12 +60,11 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         }
     };
 
-
     const handleDelete = async () => {
         setShowConfirmation(false);
         try {
             setIsLoading(true);
-            const response = await ContentService.deleteContent(formData._id);
+            const response = await PersonService.deletePerson(formData._id);
 
             if (response.status === 'success') {
                 setToast({ show: true, message: 'deleteSuccess', type: 'success' });
@@ -105,7 +89,7 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                     <div
                         className="h-64 bg-cover bg-center"
                         style={{
-                            backgroundImage: `url(${formData.bannerPath || formData.thumbnailPath})`,
+                            backgroundImage: `url(https://media.themoviedb.org/${person.profilePath || "/default-profile.jpg"})`,
                         }}
                     >
                         <button
@@ -122,13 +106,13 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                         <h2 className="text-2xl font-bold">
                             {isEditing ? (
                                 <input
-                                    name="title"
-                                    value={formData.title}
+                                    name="name"
+                                    value={formData.name}
                                     onChange={handleInputChange}
                                     className="bg-gray-800 text-white p-2 rounded w-full"
                                 />
                             ) : (
-                                formData.title
+                                formData.name
                             )}
                         </h2>
                         <div className="flex gap-2">
@@ -176,100 +160,17 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                         </div>
                     )}
 
-                    <div className="flex gap-4 text-sm text-gray-400 mb-4 flex-wrap">
-                        {isEditing ? (
-                            <>
-                                <input
-                                    type="number"
-                                    name="year"
-                                    value={formData.year || ''}
-                                    onChange={handleInputChange}
-                                    className="bg-gray-800 text-white p-1 rounded w-20"
-                                    placeholder="Year"
-                                />
-                                <input
-                                    type="number"
-                                    name="runtime"
-                                    value={formData.runtime || ''}
-                                    onChange={handleInputChange}
-                                    className="bg-gray-800 text-white p-1 rounded w-28"
-                                    placeholder="Runtime (mins)"
-                                />
-                                <input
-                                    type="text"
-                                    name="imdbRating"
-                                    value={formData.imdbRating || ''}
-                                    onChange={handleInputChange}
-                                    className="bg-gray-800 text-white p-1 rounded w-24"
-                                    placeholder="IMDB Rating"
-                                />
-                                <select
-                                    name="status"
-                                    value={formData.status || ''}
-                                    onChange={handleInputChange}
-                                    className="bg-gray-800 text-white p-1 rounded"
-                                >
-                                    <option value="finish">finished</option>
-                                    <option value="updating">updating</option>
-                                </select>
-                                <label className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        name="publish"
-                                        checked={formData.publish}
-                                        onChange={(e) => setFormData(prev => ({
-                                            ...prev,
-                                            publish: e.target.checked
-                                        }))}
-                                        className="checkbox checkbox-sm"
-                                    />
-                                    published
-                                </label>
-                            </>
-                        ) : (
-                            <>
-                                {formData.year && <span>{formData.year}</span>}
-                                {formData.runtime && (
-                                    <span>{formatRuntime(formData.runtime)}</span>
-                                )}
-                                {formData.imdbRating && (
-                                    <span>IMDB: {formData.imdbRating}</span>
-                                )}
-                                {formData.status === "updating" && (
-                                    <span className="text-amber-500">updating</span>
-                                )}
-                                <span className={`badge ${formData.publish ? 'badge-success' : 'badge-error'}`}>
-                                    {formData.publish ? 'published' : 'unpublished'}
-                                </span>
-                            </>
-                        )}
-                    </div>
-
                     {isEditing ? (
-                        <textarea
-                            name="overview"
-                            value={formData.overview || ''}
+                        <input
+                            name="slug"
+                            value={formData.slug}
                             onChange={handleInputChange}
                             className="bg-gray-800 text-white p-2 rounded w-full mb-4"
-                            rows={4}
-                            placeholder="overviewPlaceholder"
+                            placeholder="Slug"
                         />
                     ) : (
-                        formData.overview && (
-                            <p className="text-gray-300 mb-4">{formData.overview}</p>
-                        )
+                        <p className="text-gray-400 mb-4">{formData.slug}</p>
                     )}
-
-                    <div className="flex gap-4">
-                        <button className="px-6 py-2 bg-amber-600 hover:bg-amber-700 rounded-full">
-                            play
-                        </button>
-                        {formData.type === "tvshow" && (
-                            <button className="px-6 py-2 border border-gray-600 hover:border-gray-400 rounded-full">
-                                seasons
-                            </button>
-                        )}
-                    </div>
                 </div>
             </div>
 
@@ -286,4 +187,4 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
     );
 };
 
-export default ContentModel;
+export default PersonModel;
