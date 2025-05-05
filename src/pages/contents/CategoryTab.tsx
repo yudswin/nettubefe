@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { EntityTab } from './AdminContent';
 import { LoadingSpinner } from '@components/feedback/LoadingSpinner';
 import GenreTab from './GenreTab';
+import CountryTab from './CountryTab';
+import DepartmentTab from './DepartmentTab';
 
 const CategoryTab = () => {
     const [activeEntity, setActiveEntity] = useState<string>('genre');
@@ -57,11 +59,11 @@ const CategoryTab = () => {
                 )}
 
                 {activeEntity === 'country' && (
-                    <></>
+                    <CountryTab />
                 )}
 
                 {activeEntity === 'department' && (
-                    <></>
+                    <DepartmentTab />
                 )}
 
             </div>

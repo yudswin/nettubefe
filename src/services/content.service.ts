@@ -4,6 +4,8 @@ import { SuccessResponse, ErrorResponse } from '../types/response';
 import { Content } from '../types/content';
 
 export type ContentListResponse = SuccessResponse<Content[]> | ErrorResponse;
+export type ContentResponse = SuccessResponse<Content> | ErrorResponse;
+
 
 export const ContentService = {
     getContentList: async (): Promise<ContentListResponse> => {
@@ -17,7 +19,7 @@ export const ContentService = {
             throw new Error('Unknown error occurred');
         }
     },
-    updateContent: async (id: string, data: Partial<Content>): Promise<ContentListResponse> => {
+    updateContent: async (id: string, data: Partial<Content>): Promise<ContentResponse> => {
         try {
             const response = await client.patch(`/content/${id}`, data);
             return response.data;
@@ -28,7 +30,7 @@ export const ContentService = {
             throw new Error('Unknown error occurred');
         }
     },
-    deleteContent: async (id: string): Promise<ContentListResponse> => {
+    deleteContent: async (id: string): Promise<ContentResponse> => {
         try {
             const response = await client.delete(`/content/${id}`);
             return response.data;
@@ -38,5 +40,5 @@ export const ContentService = {
             }
             throw new Error('Unknown error occurred');
         }
-    }
+    },
 };

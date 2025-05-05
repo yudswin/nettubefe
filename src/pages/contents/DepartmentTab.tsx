@@ -5,97 +5,67 @@ import {
     getCoreRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { Genre } from "../../types/genre";
-import { GenreService } from "@services/genre.service";
+import { Department } from "../../types/department";
+import { DepartmentService } from "@services/department.service";
 import { Toast } from "@components/feedback/Toast";
 import { FullPageLoader } from "@components/feedback/FullPageLoader";
 import { LoadingSpinner } from "@components/feedback/LoadingSpinner";
 
-const GenreTab = () => {
+const DepartmentTab = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [toast, setToast] = useState<{
         show: boolean;
         message: string;
         type: "success" | "error";
     }>({ show: false, message: "", type: "success" });
-    const [genres, setGenres] = useState<Genre[]>([]);
-    const [newGenre, setNewGenre] = useState<Omit<Genre, "_id">>({
+    const [countries, setCountries] = useState<Department[]>([]);
+    const [newDepartment, setNewDepartment] = useState<Omit<Department, "_id">>({
         name: "",
-        englishName: "",
         slug: "",
     });
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
 
-    const slugify = (text: string) =>
-        text
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/\s+/g, "-");
-
-    useEffect(() => {
-        setNewGenre((g) => ({ ...g, slug: slugify(g.englishName) }));
-    }, [newGenre.englishName]);
-
-    const fetchGenres = async () => {
+    const fetchCountries = async () => {
         try {
             setIsLoading(true);
-            const response = await GenreService.getGenreList();
+            const response = await DepartmentService.getDepartmentList();
             if (response.status === "success") {
-                setGenres(response.result);
+                setCountries(response.result);
             } else {
                 setToast({
                     show: true,
-                    message: response.msg || 'Failed to load genres',
+                    message: response.msg || 'Failed to load countries',
                     type: 'error'
                 });
             }
         } catch (error) {
-            setToast({ show: true, message: "Failed to fetch genres", type: "error" });
+            setToast({ show: true, message: "Failed to fetch countries", type: "error" });
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchGenres();
+        fetchCountries();
     }, []);
 
-    const columnHelper = createColumnHelper<Genre>();
+    const columnHelper = createColumnHelper<Department>();
     const columns = [
         columnHelper.accessor("name", {
-            header: "Genre Name",
+            header: "Department Name",
             cell: ({ row }) =>
                 editingId === row.original._id ? (
                     <input
                         type="text"
-                        value={newGenre.name}
-                        onChange={(e) => setNewGenre({ ...newGenre, name: e.target.value })}
-                        className="border p-1"
+                        value={newDepartment.name}
+                        onChange={(e) => setNewDepartment({ ...newDepartment, name: e.target.value })}
                         disabled
-                        autoFocus
+                        className="border p-1"
                     />
                 ) : (
                     row.original.name
-                ),
-        }),
-        columnHelper.accessor("englishName", {
-            header: "English Name",
-            cell: ({ row }) =>
-                editingId === row.original._id ? (
-                    <input
-                        type="text"
-                        disabled
-                        value={newGenre.englishName}
-                        onChange={(e) =>
-                            setNewGenre({ ...newGenre, englishName: e.target.value })
-                        }
-                        className="border p-1"
-                    />
-                ) : (
-                    row.original.englishName
                 ),
         }),
         columnHelper.accessor("slug", {
@@ -104,7 +74,8 @@ const GenreTab = () => {
                 editingId === row.original._id ? (
                     <input
                         type="text"
-                        value={newGenre.slug}
+                        value={newDepartment.slug}
+                        onChange={(e) => setNewDepartment({ ...newDepartment, slug: e.target.value })}
                         disabled
                         className="border p-1"
                     />
@@ -133,7 +104,7 @@ const GenreTab = () => {
                             <button
                                 onClick={() => {
                                     setEditingId(null);
-                                    setNewGenre({ name: "", englishName: "", slug: "" });
+                                    setNewDepartment({ name: "", slug: "" });
                                 }}
                                 className="text-gray-600 hover:text-gray-500 btn btn-ghost hover:bg-[#d5dad5] border-1  bg-[#b1beaf] hover:border-gray-400"
                                 disabled={isSaving}
@@ -149,7 +120,7 @@ const GenreTab = () => {
                             <button
                                 onClick={() => {
                                     setEditingId(row.original._id);
-                                    setNewGenre(row.original);
+                                    setNewDepartment(row.original);
                                 }}
                                 className="text-gray-600 hover:text-white btn btn-ghost hover:bg-[#97a0a8] border-1  bg-[#d9e4ee] hover:border-white"
                             >
@@ -180,25 +151,25 @@ const GenreTab = () => {
     ];
 
     const table = useReactTable({
-        data: genres,
+        data: countries,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
 
     const handleDelete = async (id: string) => {
-        if (window.confirm("Are you sure you want to delete this genre?")) {
+        if (window.confirm("Are you sure you want to delete this Department?")) {
             try {
                 setIsDeletingId(id);
-                const response = await GenreService.deleteGenre(id);
+                const response = await DepartmentService.deleteDepartment(id);
                 if (response.status === "success") {
-                    setToast({ show: true, message: "Genre deleted", type: "success" });
-                    await fetchGenres();
+                    setToast({ show: true, message: "Department deleted", type: "success" });
+                    await fetchCountries();
                 } else {
-                    setToast({ show: true, message: "Failed to delete genre", type: "error" });
+                    setToast({ show: true, message: "Failed to delete Department", type: "error" });
                 }
             } catch (error) {
-                setToast({ show: true, message: "Failed to delete genre", type: "error" });
+                setToast({ show: true, message: "Failed to delete Department", type: "error" });
             } finally {
                 setIsDeletingId(null);
             }
@@ -206,7 +177,7 @@ const GenreTab = () => {
     };
 
     const handleSave = async () => {
-        if (!newGenre.name || !newGenre.englishName || !newGenre.slug) {
+        if (!newDepartment.name || !newDepartment.slug) {
             setToast({ show: true, message: "Please fill in all fields", type: "error" });
             return;
         }
@@ -215,31 +186,31 @@ const GenreTab = () => {
             setIsSaving(true);
             let response;
             if (editingId) {
-                response = await GenreService.updateGenre(editingId, newGenre);
+                response = await DepartmentService.updateDepartment(editingId, newDepartment);
             } else {
-                response = await GenreService.createGenre(newGenre);
+                response = await DepartmentService.createDepartment(newDepartment);
             }
 
             if (response.status === "success") {
                 setToast({
                     show: true,
-                    message: editingId ? "Genre updated" : "Genre created",
+                    message: editingId ? "Department updated" : "Department created",
                     type: "success",
                 });
-                await fetchGenres();
+                await fetchCountries();
                 setEditingId(null);
-                setNewGenre({ name: "", englishName: "", slug: "" });
+                setNewDepartment({ name: "", slug: "" });
             } else {
                 setToast({
                     show: true,
-                    message: response.msg || (editingId ? "Failed to update genre" : "Failed to create genre"),
+                    message: response.msg || (editingId ? "Failed to update Department" : "Failed to create Department"),
                     type: "error"
                 });
             }
         } catch (error) {
             setToast({
                 show: true,
-                message: editingId ? "Failed to update genre" : "Failed to create genre",
+                message: editingId ? "Failed to update Department" : "Failed to create Department",
                 type: "error",
             });
         } finally {
@@ -260,26 +231,17 @@ const GenreTab = () => {
             <div className="mb-4 flex gap-4">
                 <input
                     type="text"
-                    placeholder="Genre Name"
-                    value={newGenre.name}
-                    onChange={(e) => setNewGenre({ ...newGenre, name: e.target.value })}
-                    className="border p-2"
-                />
-                <input
-                    type="text"
-                    placeholder="English Name"
-                    value={newGenre.englishName}
-                    onChange={(e) =>
-                        setNewGenre({ ...newGenre, englishName: e.target.value })
-                    }
+                    placeholder="Department Name"
+                    value={newDepartment.name}
+                    onChange={(e) => setNewDepartment({ ...newDepartment, name: e.target.value })}
                     className="border p-2"
                 />
                 <input
                     type="text"
                     placeholder="slug"
-                    value={newGenre.slug}
-                    disabled
-                    className="border p-2 bg-gray-500"
+                    value={newDepartment.slug}
+                    onChange={(e) => setNewDepartment({ ...newDepartment, slug: e.target.value })}
+                    className="border p-2"
                 />
                 <button
                     onClick={handleSave}
@@ -289,9 +251,9 @@ const GenreTab = () => {
                     {isSaving ? (
                         <LoadingSpinner />
                     ) : editingId ? (
-                        "Update Genre"
+                        "Update Department"
                     ) : (
-                        "Add Genre"
+                        "Add Department"
                     )}
                 </button>
             </div>
@@ -330,4 +292,4 @@ const GenreTab = () => {
     );
 };
 
-export default GenreTab;
+export default DepartmentTab;

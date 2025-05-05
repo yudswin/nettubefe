@@ -4,6 +4,7 @@ import { LoadingSpinner } from '@components/feedback/LoadingSpinner';
 import MovieTab from './MovieTab';
 import PersonTab from './PersonTab';
 import CategoryTab from './CategoryTab';
+import CollectionTab from './CollectionTab';
 
 export interface EntityTab {
     id: string;
@@ -20,7 +21,7 @@ const AdminContent = () => {
         { id: 'movie', label: 'Content Management' },
         { id: 'person', label: 'Person Management' },
         { id: 'category', label: 'Category Management' },
-        { id: 'orders', label: 'Order Tracking' }
+        { id: 'collection', label: 'Collection Management' }
     ];
 
     // Simulated API calls
@@ -43,10 +44,8 @@ const AdminContent = () => {
     return (
         <div className="p-6 w-full">
 
-            {/* Full Page Loader */}
             {isFullPageLoading && <FullPageLoader />}
 
-            {/* Tab Navigation */}
             <div className="tabs tabs-boxed bg-base-200 p-2 rounded-lg">
                 {entities.map((entity) => (
                     <button
@@ -66,20 +65,18 @@ const AdminContent = () => {
                         <LoadingSpinner />
                     </div>
                 )}
-
-                {/* Dynamic Content - Example for Users */}
                 {activeEntity === 'movie' && (
                     <MovieTab />
                 )}
-
                 {activeEntity === 'person' && (
                     <PersonTab />
                 )}
-
                 {activeEntity === 'category' && (
                     <CategoryTab />
                 )}
-
+                {activeEntity === 'collection' && (
+                    <CollectionTab />
+                )}
             </div>
         </div>
     );
