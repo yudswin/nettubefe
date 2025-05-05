@@ -1,16 +1,15 @@
-import axios from 'axios';
+import { Genre } from "../types/genre"
 import client from './http/client';
-import { Person } from '../types/person';
 import { SuccessResponse, ErrorResponse } from '../types/response';
+import axios from "axios";
 
+export type GenreListResponse = SuccessResponse<Genre[]> | ErrorResponse;
+export type GenreResponse = SuccessResponse<Genre> | ErrorResponse;
 
-export type PersonListResponse = SuccessResponse<Person[]> | ErrorResponse;
-export type PersonResponse = SuccessResponse<Person> | ErrorResponse;
-
-export const PersonService = {
-    getPersonList: async (): Promise<PersonListResponse> => {
+export const GenreService = {
+    getGenreList: async (): Promise<GenreListResponse> => {
         try {
-            const response = await client.get('/person/list');
+            const response = await client.get('/content/genre/list');
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -19,10 +18,9 @@ export const PersonService = {
             throw new Error('Unknown error occurred');
         }
     },
-
-    createPerson: async (data: Omit<Person, '_id'>): Promise<PersonResponse> => {
+    createGenre: async (data: Omit<Genre, '_id'>): Promise<GenreResponse> => {
         try {
-            const response = await client.post('/person', data);
+            const response = await client.post('/content/genre', data);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -31,10 +29,9 @@ export const PersonService = {
             throw new Error('Unknown error occurred');
         }
     },
-
-    updatePerson: async (id: string, data: Partial<Person>): Promise<PersonResponse> => {
+    updateGenre: async (id: string, data: Partial<Genre>): Promise<GenreResponse> => {
         try {
-            const response = await client.patch(`/person/${id}`, data);
+            const response = await client.patch(`/content/genre/${id}`, data);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -43,10 +40,9 @@ export const PersonService = {
             throw new Error('Unknown error occurred');
         }
     },
-
-    deletePerson: async (id: string): Promise<PersonResponse> => {
+    deleteGenre: async (id: string): Promise<GenreResponse> => {
         try {
-            const response = await client.delete(`/person/${id}`);
+            const response = await client.delete(`/content/genre/${id}`);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -55,4 +51,4 @@ export const PersonService = {
             throw new Error('Unknown error occurred');
         }
     }
-};
+}

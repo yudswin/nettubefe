@@ -1,36 +1,7 @@
 import axios from 'axios';
 import client from './http/client';
-
-interface SuccessResponse<T> {
-    status: 'success';
-    msg: string;
-    result: T;
-}
-
-interface ErrorResponse {
-    status: 'failed';
-    msg: string;
-    error: string;
-    details?: {
-        error: string;
-        details: string;
-    };
-}
-
-export interface Content {
-    _id: string;
-    title: string;
-    thumbnailPath: string;
-    bannerPath?: string;
-    overview?: string;
-    imdbRating?: string;
-    runtime?: number;
-    releaseDate?: string;
-    year?: number;
-    type: 'movie' | 'tvshow';
-    status?: 'finish' | 'updating';
-    publish: boolean;
-}
+import { SuccessResponse, ErrorResponse } from '../types/response';
+import { Content } from '../types/content';
 
 export type ContentListResponse = SuccessResponse<Content[]> | ErrorResponse;
 

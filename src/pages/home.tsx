@@ -2,10 +2,9 @@ import Header from '../components/layout/Header'
 import ContentRow from '../components/ui/ContentRow'
 import Footer from '../components/layout/Footer'
 import { Sidebar } from '../components/layout/Sidebar'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import { LibraryContent } from './contents/LibraryContent'
-import { useAuth } from '@contexts/AuthContext'
 import AdminContent from './contents/AdminContent'
 
 const HomeContent = () => {

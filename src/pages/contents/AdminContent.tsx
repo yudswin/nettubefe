@@ -3,8 +3,9 @@ import { FullPageLoader } from '@components/feedback/FullPageLoader';
 import { LoadingSpinner } from '@components/feedback/LoadingSpinner';
 import MovieTab from './MovieTab';
 import PersonTab from './PersonTab';
+import CategoryTab from './CategoryTab';
 
-interface EntityTab {
+export interface EntityTab {
     id: string;
     label: string;
 }
@@ -17,8 +18,8 @@ const AdminContent = () => {
 
     const entities: EntityTab[] = [
         { id: 'movie', label: 'Content Management' },
-        { id: 'users', label: 'User Management' },
         { id: 'person', label: 'Person Management' },
+        { id: 'category', label: 'Category Management' },
         { id: 'orders', label: 'Order Tracking' }
     ];
 
@@ -34,10 +35,10 @@ const AdminContent = () => {
     };
 
     // Simulate initial data loading
-    useEffect(() => {
-        setIsFullPageLoading(true);
-        simulateLoad(true);
-    }, [activeEntity]);
+    // useEffect(() => {
+    //     setIsFullPageLoading(true);
+    //     simulateLoad(true);
+    // }, [activeEntity]);
 
     return (
         <div className="p-6 w-full">
@@ -73,6 +74,10 @@ const AdminContent = () => {
 
                 {activeEntity === 'person' && (
                     <PersonTab />
+                )}
+
+                {activeEntity === 'category' && (
+                    <CategoryTab />
                 )}
 
             </div>
