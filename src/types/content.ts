@@ -1,6 +1,7 @@
 export interface Content {
     _id: string;
     title: string;
+    slug?: string;
     thumbnailPath: string;
     bannerPath?: string;
     overview?: string;

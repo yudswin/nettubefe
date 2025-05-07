@@ -19,6 +19,17 @@ export const ContentService = {
             throw new Error('Unknown error occurred');
         }
     },
+    createContent: async (data: Omit<Content, '_id'>): Promise<ContentResponse> => {
+        try {
+            const response = await client.post('/content', data);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
     updateContent: async (id: string, data: Partial<Content>): Promise<ContentResponse> => {
         try {
             const response = await client.patch(`/content/${id}`, data);

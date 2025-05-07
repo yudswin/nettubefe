@@ -4,6 +4,7 @@ import { Toast } from "@components/feedback/Toast";
 import { ContentService } from "@services/content.service";
 import ContentCard from "@components/ui/ContentCard";
 import { Content } from "../../types/content";
+import CreateContentModal from "@components/create/CreateContentModal";
 
 const MediaTab = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -53,6 +54,13 @@ const MediaTab = () => {
         fetchContent();
     }, []);
 
+    const [showCreateModal, setShowCreateModal] = useState(false);
+
+    const handleContentCreated = (newContent: Content) => {
+        setContentList(prev => [...prev, newContent]);
+    };
+
+
     return (
         <div className="p-4">
             {isLoading && <FullPageLoader />}
@@ -65,9 +73,20 @@ const MediaTab = () => {
                 />
             )}
 
-            <h2 className="text-2xl font-bold mb-6">Content Library</h2>
-
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-row justify-between">
+                <h2 className="text-2xl font-bold mb-6">Content Library</h2>
+                <button
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 btn btn-ghost"
+                    onClick={() => setShowCreateModal(true)}>
+                    Add New Content
+                </button>
+            </div>
+            <CreateContentModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onContentCreated={handleContentCreated}
+            />
+            <div className="flex flex-wrap gap-8">
                 {contentList.length > 0 ? (
                     contentList.map((content) => (
                         <ContentCard

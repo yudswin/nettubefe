@@ -4,7 +4,7 @@ import { FullPageLoader } from "@components/feedback/FullPageLoader";
 import { Toast } from "@components/feedback/Toast";
 import { Person } from "../../types/person";
 
-export interface PersonDetailModelProps {
+interface PersonDetailModelProps {
     person: {
         _id: string;
         name: string;

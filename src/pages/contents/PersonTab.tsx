@@ -4,6 +4,7 @@ import { Person } from "../../types/person";
 import { useEffect, useState } from "react";
 import PersonCard from "@components/ui/PersonCard";
 import { PersonService } from "@services/person.service";
+import CreatePersonModal from "@components/create/CreatePersonModal";
 
 
 const PersonTab = () => {
@@ -54,6 +55,13 @@ const PersonTab = () => {
         fetchPerson();
     }, []);
 
+
+    const [showCreateModal, setShowCreateModal] = useState(false);
+
+    const handlePersonCreated = (newPerson: Person) => {
+        setPersonList(prev => [...prev, newPerson]);
+    };
+
     return (
         <div className="p-4">
             {isLoading && <FullPageLoader />}
@@ -65,8 +73,19 @@ const PersonTab = () => {
                     onClose={() => setToast(prev => ({ ...prev, show: false }))}
                 />
             )}
-
-            <h2 className="text-2xl font-bold mb-6">Person Library</h2>
+            <div className="flex flex-row justify-between">
+                <h2 className="text-2xl font-bold mb-6">Person Library</h2>
+                <button
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 btn btn-ghost"
+                    onClick={() => setShowCreateModal(true)}>
+                    Add New Person
+                </button>
+            </div>
+            <CreatePersonModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onPersonCreated={handlePersonCreated}
+            />
             <div className="flex flex-wrap gap-4">
                 {personList.length > 0 ? (
                     personList.map((person) => (
