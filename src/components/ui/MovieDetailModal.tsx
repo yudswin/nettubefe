@@ -56,10 +56,10 @@ const MovieDetailModal = ({ movie, isOpen, onClose, onPlay }: MovieDetailModalPr
     return (
         <dialog
             ref={dialogRef}
-            className="modal modal-bottom sm:modal-middle"
+            className="modal "
             onClick={handleBackdropClick}
         >
-            <div className="modal-box bg-gray-900 max-w-6xl w-full p-0 rounded-lg">
+            <div className="modal-box bg-gray-900 w-11/12 max-w-5xl p-0 rounded-lg">
                 {/* Cover section */}
                 <div
                     className="h-72 bg-cover bg-center relative"

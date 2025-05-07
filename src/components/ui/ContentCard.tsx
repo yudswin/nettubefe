@@ -5,16 +5,20 @@ import { Content } from "../../types/content";
 
 interface ContentCardProps extends Content {
     onDelete?: (deletedId: string) => void;
+    onUpdate?: (updatedPerson: Content) => void;
 }
 
 const ContentCard = ({
     _id,
     title,
+    overview,
     thumbnailPath,
+    bannerPath,
     type,
     publish,
     status,
     year,
+    onUpdate,
     onDelete
 }: ContentCardProps) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -28,6 +32,10 @@ const ContentCard = ({
         setModalOpen(true);
     };
 
+    const imageUrl = bannerPath
+        ? `https://media.themoviedb.org/${bannerPath}`
+        : "/defaultContent.png";
+
     return (
         <>
             <div
@@ -36,7 +44,7 @@ const ContentCard = ({
             >
                 <div
                     className="h-64 rounded-md mb-2 bg-gray-800 relative bg-cover bg-center"
-                    style={{ backgroundImage: `url(${thumbnailPath})` }}
+                    style={{ backgroundImage: `url(${imageUrl})` }}
                 >
                     {publish && (
                         <div className="absolute top-2 right-2 badge badge-warning">
@@ -58,7 +66,9 @@ const ContentCard = ({
                 content={{
                     _id,
                     title,
+                    overview,
                     thumbnailPath,
+                    bannerPath,
                     type,
                     publish,
                     status,
@@ -66,6 +76,7 @@ const ContentCard = ({
                 }}
                 isOpen={modalOpen}
                 onClose={handleCloseModal}
+                onUpdate={onUpdate}
                 onDelete={onDelete}
             />
         </>

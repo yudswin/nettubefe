@@ -14,7 +14,7 @@ export const Toast = ({ message, type, duration = 3000, onClose }: ToastProps) =
     }, [duration, onClose]);
 
     return (
-        <div className="toast toast-top toast-center">
+        <div className="toast toast-top toast-center z-50">
             <div className={`alert alert-${type} flex items-center`}>
                 <div className="flex-1 flex flex-row items-center gap-2">
                     {type === 'success' ? (

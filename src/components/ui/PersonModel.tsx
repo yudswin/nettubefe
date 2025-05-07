@@ -27,11 +27,17 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
         message: string;
         type: 'success' | 'error';
     }>({ show: false, message: '', type: 'success' });
+    const [showProfileModal, setShowProfileModal] = useState(false);
+    const [newProfilePath, setNewProfilePath] = useState("");
+    const [previewProfilePath, setPreviewProfilePath] = useState("");
 
     useEffect(() => {
         setFormData(person);
         setIsEditing(false);
+        setNewProfilePath(person.profilePath || "");
+        setPreviewProfilePath(person.profilePath || "");
     }, [person]);
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -55,6 +61,31 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
             }
         } catch (error) {
             setToast({ show: true, message: 'updateError', type: 'error' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleUpdateProfile = async () => {
+        try {
+            setIsLoading(true);
+            const updateData = {
+                ...formData,
+                profilePath: newProfilePath
+            };
+
+            const response = await PersonService.updatePerson(person._id, updateData);
+
+            if (response.status === 'success') {
+                setFormData(prev => ({ ...prev, profilePath: newProfilePath }));
+                onUpdate?.(updateData);
+                setShowProfileModal(false);
+                setToast({ show: true, message: 'Profile image updated', type: 'success' });
+            } else {
+                setToast({ show: true, message: response.msg || 'Update failed', type: 'error' });
+            }
+        } catch (error) {
+            setToast({ show: true, message: 'Update error', type: 'error' });
         } finally {
             setIsLoading(false);
         }
@@ -132,6 +163,16 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
                             >
                                 {isLoading ? 'saving' : (isEditing ? 'save' : 'edit')}
                             </button>
+
+                            {!isEditing && (
+                                <button
+                                    onClick={() => setShowProfileModal(true)}
+                                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full"
+                                    disabled={isLoading}
+                                >
+                                    Change Image
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -171,6 +212,58 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
                     ) : (
                         <p className="text-gray-400 mb-4">{formData.slug}</p>
                     )}
+                    <dialog className={`modal ${showProfileModal ? 'modal-open' : ''}`}>
+                        <div className="modal-box bg-gray-900">
+                            <h3 className="font-bold text-lg mb-4">Update Profile Image</h3>
+
+                            <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Image URL</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={newProfilePath}
+                                    onChange={(e) => {
+                                        setNewProfilePath(e.target.value);
+                                        setPreviewProfilePath(e.target.value);
+                                    }}
+                                    placeholder="Enter image URL"
+                                    className="input input-bordered bg-gray-800 text-white"
+                                />
+                            </div>
+
+                            <div className="mt-4">
+                                <label className="label">
+                                    <span className="label-text">Preview</span>
+                                </label>
+                                <div className="aspect-square w-full bg-gray-800 rounded-lg overflow-hidden">
+                                    <img
+                                        src={`https://media.themoviedb.org/${previewProfilePath}`}
+                                        alt="Profile preview"
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="modal-action mt-6">
+                                <button
+                                    className="btn btn-ghost"
+                                    onClick={() => setShowProfileModal(false)}
+                                    disabled={isLoading}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleUpdateProfile}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </div>
+                    </dialog>
+
                 </div>
             </div>
 

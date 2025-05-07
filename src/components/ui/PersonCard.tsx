@@ -3,7 +3,8 @@ import { Person } from "../../types/person";
 import PersonModel from "./PersonModel";
 
 interface PersonCardProps extends Person {
-    onDelete?: (deleteId: string) => void
+    onDelete?: (deleteId: string) => void;
+    onUpdate?: (updatedPerson: Person) => void;
 }
 
 const PersonCard = ({
@@ -11,7 +12,8 @@ const PersonCard = ({
     name,
     slug,
     profilePath,
-    onDelete
+    onDelete,
+    onUpdate
 }: PersonCardProps) => {
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -23,6 +25,15 @@ const PersonCard = ({
         setModalOpen(true);
     };
 
+    const handleUpdate = (updatedPerson: Person) => {
+        onUpdate?.(updatedPerson);
+        handleCloseModal();
+    };
+
+    const imageUrl = profilePath 
+        ? `https://media.themoviedb.org/${profilePath}`
+        : "/defaultProfile.jpg";
+
     return (
         <>
             <div
@@ -31,7 +42,7 @@ const PersonCard = ({
             >
                 <div
                     className="h-64 rounded-full mb-2 bg-gray-800 relative bg-cover bg-center"
-                    style={{ backgroundImage: `url(https://media.themoviedb.org/${profilePath})` }}
+                    style={{ backgroundImage: `url(${imageUrl})` }}
                 >
                 </div>
                 <div className="font-medium text-sm">{name}</div>
@@ -47,6 +58,7 @@ const PersonCard = ({
                 isOpen={modalOpen}
                 onClose={handleCloseModal}
                 onDelete={onDelete}
+                onUpdate={handleUpdate}
             />
         </>
 

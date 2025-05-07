@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FullPageLoader } from '@components/feedback/FullPageLoader';
 import { LoadingSpinner } from '@components/feedback/LoadingSpinner';
 import MovieTab from './MovieTab';

@@ -18,6 +18,12 @@ const MediaTab = () => {
         setContentList(prev => prev.filter(content => content._id !== deletedId));
     };
 
+    const handleContentUpdate = (updatedContent: Content) => {
+        setContentList(prev => prev.map(content =>
+            content._id === updatedContent._id ? updatedContent : content
+        ));
+    }
+
     const fetchContent = async () => {
         try {
             setIsLoading(true);
@@ -69,6 +75,7 @@ const MediaTab = () => {
                             _id={content._id}
                             title={content.title}
                             thumbnailPath={content.thumbnailPath}
+                            bannerPath={content.bannerPath}
                             type={content.type}
                             publish={content.publish}
                             status={content.status}
@@ -77,6 +84,7 @@ const MediaTab = () => {
                             overview={content.overview}
                             imdbRating={content.imdbRating}
                             onDelete={handleContentDelete}
+                            onUpdate={handleContentUpdate}
                         />
                     ))
                 ) : (

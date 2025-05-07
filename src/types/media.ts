@@ -28,3 +28,13 @@ export interface Movie {
     cast: Cast[];
     episodes?: Episode[];
 }
+
+export interface Media {
+    _id: string,
+    episode: number,
+    season: number, 
+    publicId: string,
+    title: string,
+    audioType: 'subtitle' | 'original' | 'voiceover'
+    contentId: string,
+}

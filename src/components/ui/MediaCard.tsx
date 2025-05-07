@@ -35,7 +35,11 @@ const MediaCard = ({ id, title, image, progress, added, type, movieData }: Media
         ],
         episodes: type === 'continue' ? [
             { id: 1, title: "Episode 1", number: 1, image: "/placeholder_episode.jpg", duration: "45m" },
-            { id: 2, title: "Episode 2", number: 2, image: "/placeholder_episode.jpg", duration: "42m" }
+            { id: 2, title: "Episode 2", number: 2, image: "/placeholder_episode.jpg", duration: "42m" },
+            { id: 3, title: "Episode 1", number: 3, image: "/placeholder_episode.jpg", duration: "45m" },
+            { id: 4, title: "Episode 1", number: 4, image: "/placeholder_episode.jpg", duration: "45m" },
+            { id: 5, title: "Episode 1", number: 5, image: "/placeholder_episode.jpg", duration: "45m" },
+            { id: 6, title: "Episode 1", number: 6, image: "/placeholder_episode.jpg", duration: "45m" },
         ] : undefined
     };
 

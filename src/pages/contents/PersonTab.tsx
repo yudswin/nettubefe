@@ -15,10 +15,6 @@ const PersonTab = () => {
         type: 'success' | 'error';
     }>({ show: false, message: '', type: 'success' });
 
-    const handleContentDelete = (deletedId: string) => {
-        setPersonList(prev => prev.filter(content => content._id !== deletedId));
-    };
-
     const fetchPerson = async () => {
         try {
             setIsLoading(true);
@@ -42,6 +38,16 @@ const PersonTab = () => {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleUpdatePerson = (updatedPerson: Person) => {
+        setPersonList(prev => prev.map(person =>
+            person._id === updatedPerson._id ? updatedPerson : person
+        ));
+    };
+
+    const handleDeletePerson = (deletedId: string) => {
+        setPersonList(prev => prev.filter(person => person._id !== deletedId));
     };
 
     useEffect(() => {
@@ -70,7 +76,8 @@ const PersonTab = () => {
                             name={person.name}
                             profilePath={person.profilePath}
                             slug={person.slug}
-                            onDelete={handleContentDelete}
+                            onDelete={handleDeletePerson}
+                            onUpdate={handleUpdatePerson}
                         />
                     ))
                 ) : (
