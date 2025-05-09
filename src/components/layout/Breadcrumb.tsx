@@ -8,7 +8,7 @@ const Breadcrumb = ({ currentPage }: BreadcrumbProps) => {
     const navigate = useNavigate();
 
     return (
-        <div className="text-sm breadcrumbs ml-4 font-bold">
+        <div className="text-sm breadcrumbs font-bold">
             <ul>
                 <li>
                     <button

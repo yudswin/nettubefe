@@ -1,6 +1,10 @@
 import Header from '@components/layout/Header'
 import { Content } from '../types/content';
 import { Media } from '../types/media';
+import { Cast } from '../types/cast';
+import { Genre } from '../types/genre';
+import { Country } from '../types/country';
+import { Director } from '../types/director';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'
 import { ContentService } from '@services/content.service';
@@ -8,6 +12,10 @@ import { LoadingSpinner } from '@components/feedback/LoadingSpinner';
 import MediaCard from '@components/user/MediaCard';
 import { MediaService } from '@services/media.service';
 import Breadcrumb from '@components/layout/Breadcrumb';
+import { CastService } from '@services/cast.service';
+import { GenreService } from '@services/genre.service';
+import { CountryService } from '@services/country.service';
+import { DirectorService } from '@services/director.service';
 
 const movie = () => {
     const { contentId } = useParams<{ contentId: string }>();
@@ -16,6 +24,10 @@ const movie = () => {
     const [content, setContent] = useState<Content>();
     const [isMediaLoading, setIsMediaLoading] = useState(false);
     const [mediaList, setMediaList] = useState<Media[]>([]);
+    const [castList, setCastList] = useState<Cast[]>([]);
+    const [directorList, setDirectorList] = useState<Director[]>([]);
+    const [genreList, setGenreList] = useState<Genre[]>([]);
+    const [countryList, setCountryList] = useState<Country[]>([]);
 
     const [toast, setToast] = useState<{
         show: boolean;
@@ -75,11 +87,120 @@ const movie = () => {
         }
     }
 
+    const fetchCast = async () => {
+        try {
+            setIsLoading(true)
+            if (contentId) {
+                const response = await CastService.getAllCastByContent(contentId)
+                if (response.status === 'success') {
+                    setCastList(response.result);
+                } else {
+                    setToast({
+                        show: true,
+                        message: response.error || 'Failed to load casts',
+                        type: 'error'
+                    })
+                }
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchDirector = async () => {
+        try {
+            setIsLoading(true)
+            if (contentId) {
+                const response = await DirectorService.getAllDirectorByContent(contentId)
+                if (response.status === 'success') {
+                    setDirectorList(response.result);
+                } else {
+                    setToast({
+                        show: true,
+                        message: response.error || 'Failed to load casts',
+                        type: 'error'
+                    })
+                }
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchGenre = async () => {
+        try {
+            setIsLoading(true)
+            if (contentId) {
+                const response = await GenreService.getGenresByContent(contentId)
+                if (response.status === 'success') {
+                    setGenreList(response.result);
+                } else {
+                    setToast({
+                        show: true,
+                        message: response.error || 'Failed to load casts',
+                        type: 'error'
+                    })
+                }
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchCountry = async () => {
+        try {
+            setIsLoading(true)
+            if (contentId) {
+                const response = await CountryService.getCountriesByContent(contentId)
+                if (response.status === 'success') {
+                    setCountryList(response.result);
+                } else {
+                    setToast({
+                        show: true,
+                        message: response.error || 'Failed to load countries',
+                        type: 'error'
+                    })
+                }
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+
+
     useEffect(() => {
         fetchContent();
         fetchMedia();
+        fetchCast();
+        fetchDirector();
+        fetchGenre();
+        fetchCountry();
     }, []);
-
 
     return (
         <div className="flex flex-col min-h-screen bg-base-100 text-base-content">
@@ -89,7 +210,6 @@ const movie = () => {
                     <Header toggleSidebar={() => (console.log())} sidebarOpen={false} />
                     {content ? (
                         <div className="max-w-7xl mx-auto px-4 py-8">
-                            {/* Banner Section */}
                             <div className="hero mb-8"  >
                                 <div className="hero-overlay bg-opacity-60 rounded-lg"
                                     style={{
@@ -138,25 +258,82 @@ const movie = () => {
                                                 </div>
                                             )}
                                         </div>
-
+                                        <div className='flex flex-wrap gap-2 mb-2'>
+                                            <span className='font-bold'>Country: </span>
+                                            {countryList.map((country) => (
+                                                <span key={country._id} className="opacity-100">
+                                                    {country.name} ({country.code})
+                                                </span>
+                                            ))}
+                                        </div>
                                         {content.releaseDate && (
-                                            <div className="text-neutral-content mb-4">
-                                                Release Date:{" "}
+                                            <div className="mb-4">
+                                                <span className='font-bold'>Release Date:{" "} </span>
                                                 {new Date(content.releaseDate).toLocaleDateString()}
                                             </div>
                                         )}
+                                        {isLoading && <LoadingSpinner />}
+                                        <div className='flex flex-wrap gap-2 mb-4'>
+                                            <span className='font-bold'>Genres:{" "} </span>
+                                            {genreList.map((genre) => (
+                                                <div
+                                                    key={genre._id}
+                                                    className="badge bg-amber-500/50 border-0 hover:bg-primary hover:text-primary-content transition-colors">
+                                                    <span className="opacity-100">
+                                                        {genre.englishName}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className='flex flex-wrap gap-2 mb-4'>
+                                            <span className='font-bold'>Director:{" "} </span>
+                                            {directorList.map((director) => (
+                                                <div key={director.personId} onClick={() => navigate(`/person/${director.personId}`)}>
+                                                    <span className="opacity-100 hover:underline hover:cursor-pointer">
+                                                        {director.personName}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Details Section */}
                             <div className="flex flex-col lg:flex-row gap-8 mb-8">
                                 <div className="flex-1">
-                                    <Breadcrumb currentPage={content?.title || 'Movie Detail'} />
-                                    <h2 className="text-3xl font-bold mb-4">Overview</h2>
-                                    <p className="text-neutral-content leading-relaxed">
-                                        {content.overview || "No overview available."}
-                                    </p>
+                                    <div>
+                                        <Breadcrumb currentPage={content?.title || 'Movie Detail'} />
+                                        <div className="border-b h-2 border-amber-500 w-full"></div>
+                                    </div>
+                                    <div className='flex md:flex-row flex-col gap-4 pt-4'>
+                                        <div className='w-1/2'>
+                                            <h3 className="text-xl font-bold mb-4">Overview</h3>
+                                            <p className="text-neutral-content leading-relaxed">
+                                                {content.overview || "No overview available."}
+                                            </p>
+                                        </div>
+                                        <div className='w-1/2'>
+                                            <h3 className="text-xl font-bold mb-4">Casts</h3>
+                                            <div className="carousel carousel-center space-x-4 pb-2">
+                                                {castList.map(cast => (
+                                                    <div key={cast.personId} className="carousel-item w-24 hover:cursor-pointer"
+                                                        onClick={() => navigate(`/person/${cast.personId}`)}
+                                                    >
+                                                        <div className="flex flex-col items-center">
+                                                            <div
+                                                                className="avatar mb-2"
+                                                            >
+                                                                <div className="w-24 h-24 rounded-full">
+                                                                    <img src={`https://media.themoviedb.org/${cast.profilePath}`} alt={cast.character} />
+                                                                </div>
+                                                            </div>
+                                                            <p className="text-center text-sm font-medium">{cast.personName}</p>
+                                                            <p className="text-center text-xs text-gray-400">{cast.character}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="lg:w-80">
@@ -189,8 +366,8 @@ const movie = () => {
                                 </div>
                             </div>
 
-                            {/* Media List */}
                             <div className="grid grid-cols-1 gap-4">
+                                <h3 className="text-xl font-bold mb-4">Media</h3>
                                 {isMediaLoading && <LoadingSpinner />}
                                 {mediaList.map((media) => (
                                     <MediaCard

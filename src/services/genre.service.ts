@@ -50,5 +50,16 @@ export const GenreService = {
             }
             throw new Error('Unknown error occurred');
         }
-    }
+    },
+    getGenresByContent: async (contentId: string): Promise<GenreListResponse> => {
+        try {
+            const response = await client.get(`/content/${contentId}/genres`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
 }

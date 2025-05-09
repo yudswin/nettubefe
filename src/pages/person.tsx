@@ -1,6 +1,6 @@
 import Header from '@components/layout/Header'
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { PersonService } from '@services/person.service'
 import { LoadingSpinner } from '@components/feedback/LoadingSpinner'
 import Breadcrumb from '@components/layout/Breadcrumb'
@@ -8,13 +8,16 @@ import { Person } from '../types/person'
 import { Content } from '../types/content'
 import { ContentService } from '@services/content.service'
 import ContentCard from '@components/user/ContentCard'
+import { Departments, PersonDepartmentService } from '@services/junction/personDepartment.service'
 
 const person = () => {
     const { personId } = useParams<{ personId: string }>()
-    const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(true)
     const [person, setPerson] = useState<Person>()
     const [contentList, setContentList] = useState<Content[]>([]);
+    const [isDepartmentLoading, setIsDepartmentLoading] = useState(false);
+    const [departmentList, setDepartmentList] = useState<Departments[]>([]);
+
 
     const [toast, setToast] = useState<{
         show: boolean
@@ -75,9 +78,36 @@ const person = () => {
         }
     };
 
+    const fetchDepartment = async () => {
+        try {
+            setIsDepartmentLoading(true)
+            if (personId) {
+                const response = await PersonDepartmentService.getDepartmentList(personId)
+                if (response.status === 'success') {
+                    setDepartmentList(response.result);
+                } else {
+                    setToast({
+                        show: true,
+                        message: response.error || 'Failed to load media',
+                        type: 'error'
+                    })
+                }
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsDepartmentLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchPerson()
         fetchContent()
+        fetchDepartment()
     }, [])
 
     return (
@@ -102,6 +132,16 @@ const person = () => {
                                         <h1 className="text-5xl font-bold">
                                             {person.name}
                                         </h1>
+                                        {isDepartmentLoading && <LoadingSpinner />}
+                                        {departmentList.map((department) => (
+                                            <div
+                                                key={department.departmentId}
+                                                className="badge badge-outline badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors">
+                                                <span className="transition-opacity">
+                                                    {department.departmentName}
+                                                </span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

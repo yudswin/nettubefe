@@ -26,7 +26,7 @@ const MediaCard = ({ media, contentType }: MediaCardProps) => {
                 </div>
             </div>
             <div>
-                <div className="flex justify-between items-start mb-2">
+                <div className="md:flex hidden justify-between items-start mb-2">
                     <h4 className="text-lg font-medium truncate" title={media.title}>
                         {media.title}
                     </h4>
