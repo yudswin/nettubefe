@@ -12,7 +12,7 @@ const SignOutButton = () => {
     return (
         <button
             onClick={toggleSignout}
-            className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md"
+            className="flex items-center space-x-1 text-sm md:bg-gray-800 md:hover:bg-gray-700 px-3 py-1 rounded-md"
         >
             <span>{t.logout}</span>
             <span>↩️</span>

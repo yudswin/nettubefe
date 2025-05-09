@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AuthModel from '../ui/AuthModel';
 import { useAuth } from '@contexts/AuthContext';
 import SignOutButton from '@components/ui/SignOutButton';
+import SearchBox from '@components/search/SearchBox';
 
 interface HeaderProps {
     toggleSidebar: () => void;
@@ -50,21 +51,9 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
 
             {/* App name */}
             <div className="text-2xl font-bold text-amber-500">{t.appName}</div>
-
-            {/* Search (hidden on mobile) */}
-            <div className="hidden md:block flex-1 max-w-xl mx-8">
-                <div className="relative">
-                    <input
-                        type="text"
-                        placeholder={t.searchPlaceholder}
-                        className="w-full bg-gray-800 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    />
-                    <span className="absolute right-3 top-2.5">🔍</span>
-                </div>
-            </div>
-
+            <SearchBox />
             {/* Right section with language and user */}
-            <div className="flex items-center gap-4">
+            <div className="md:flex items-center gap-4 hidden">
                 <LanguageSwitcher />
 
                 {/* User profile (hidden on mobile) */}
@@ -90,7 +79,7 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
                     :  // Signed In
                     <>
                         <div className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md">
-                            <span>{ user?.name ? user.name : t.user}</span>
+                            <span>{user?.name ? user.name : t.user}</span>
                         </div>
                         <div>
                             <SignOutButton />
@@ -98,7 +87,7 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
                     </>
                 }
             </div>
-        </header>
+        </header >
     )
 }
 

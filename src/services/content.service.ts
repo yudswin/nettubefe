@@ -52,4 +52,28 @@ export const ContentService = {
             throw new Error('Unknown error occurred');
         }
     },
+    searchContent: async (query: string): Promise<ContentListResponse> => {
+        try {
+            const response = await client.get('/content/v1/search', {
+                params: { q: query }
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+    getContentById: async (contentId: string): Promise<ContentResponse> => {
+        try {
+            const response = await client.get(`/content/${contentId}`)
+            return response.data
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    }
 };

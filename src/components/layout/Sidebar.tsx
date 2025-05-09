@@ -1,5 +1,8 @@
+import AuthModel from '@components/ui/AuthModel';
+import SignOutButton from '@components/ui/SignOutButton';
 import { useAuth } from '@contexts/AuthContext';
 import { useLanguage } from '@contexts/LanguageContext';
+import { useEffect, useState } from 'react';
 interface SidebarProps {
     isOpen: boolean;
     toggleSidebar: () => void;
@@ -18,8 +21,11 @@ export const Sidebar = ({
     onSelectLibrary,
     selectedLibrary
 }: SidebarProps) => {
-    const { user } = useAuth();
+    const [isAuth, setIsAuth] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false);
+    const { user, isAuthenticated } = useAuth();
     const { t } = useLanguage();
+
 
     // const libraries = [
     //     { id: 1, name: t.movies, icon: '🎬' },
@@ -27,6 +33,18 @@ export const Sidebar = ({
     //     { id: 3, name: t.music, icon: '🎵' },
     //     { id: 4, name: t.photos, icon: '📷' },
     // ];
+
+    useEffect(() => {
+        setIsAuth(isAuthenticated || !!user)
+    }, [isAuthenticated, user])
+
+    const handleCardClick = () => {
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
 
     return (
         <>
@@ -44,22 +62,23 @@ export const Sidebar = ({
                 w-64 md:w-56
                 ${isOpen ? 'shadow-2xl' : ''}`}>
 
-                <div className="p-4 h-full overflow-y-auto">
-                    <nav>
-                        <ul>
-                            <li className="mb-1">
-                                <button
-                                    onClick={() => onTabChange('home')}
-                                    className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'home'
-                                        ? 'bg-gray-800 border-l-4 border-amber-500'
-                                        : 'hover:bg-gray-800'
-                                        }`}
-                                >
-                                    <span>{t.home}</span>
-                                </button>
-                            </li>
+                <div>
+                    <div className="p-4 h-full overflow-y-auto">
+                        <nav>
+                            <ul>
+                                <li className="mb-1">
+                                    <button
+                                        onClick={() => onTabChange('home')}
+                                        className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'home'
+                                            ? 'bg-gray-800 border-l-4 border-amber-500'
+                                            : 'hover:bg-gray-800'
+                                            }`}
+                                    >
+                                        <span>{t.home}</span>
+                                    </button>
+                                </li>
 
-                            {/* Libraries Section
+                                {/* Libraries Section
                             {libraries.map(library => (
                                 <li key={library.id} className="mb-1">
                                     <button
@@ -78,39 +97,75 @@ export const Sidebar = ({
                                 </li>
                             ))} */}
 
-                            {/* Admin Tab */}
-                            {user?.roles === 'admin' && (
-                                <li className="mb-1">
+                                {/* Admin Tab */}
+                                {user?.roles === 'admin' && (
+                                    <li className="mb-1">
+                                        <button
+                                            onClick={() => onTabChange('admin')}
+                                            className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'admin'
+                                                ? 'bg-gray-800 border-l-4 border-amber-500'
+                                                : 'hover:bg-gray-800'
+                                                }`}
+                                        >
+                                            <span className="mr-3">🛡️</span>
+                                            <span>{t.tabAdmin}</span>
+                                        </button>
+                                    </li>
+                                )}
+
+                                {/* Settings Tab */}
+                                <li className="mt-6 mb-1">
                                     <button
-                                        onClick={() => onTabChange('admin')}
-                                        className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'admin'
+                                        onClick={() => onTabChange('settings')}
+                                        className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'settings'
                                             ? 'bg-gray-800 border-l-4 border-amber-500'
                                             : 'hover:bg-gray-800'
                                             }`}
                                     >
-                                        <span className="mr-3">🛡️</span>
-                                        <span>{t.tabAdmin}</span>
+                                        <span className="mr-3">⚙️</span>
+                                        <span>{t.tabSetting}</span>
                                     </button>
                                 </li>
-                            )}
+                            </ul>
+                        </nav>
+                        <div className='md:hidden flex flex-col'>
+                            <div className="border-t h-3 w-full border-amber-500 p-2"></div>
+                            {!isAuth ?
+                                // Auth Title
+                                <>
+                                    <div className="md:flex items-center ml-4">
+                                        <button
+                                            onClick={handleCardClick}
+                                            className={`w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-gray-800`}
+                                        >
+                                            <span>{t.authTitle}</span>
+                                            <div>
+                                                👤
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <AuthModel
+                                        isOpen={modalOpen}
+                                        onClose={handleCloseModal}
+                                    />
+                                </>
+                                :  // Signed In
+                                <>
+                                    <div
+                                        className={`w-full text-left flex items-center px-4 py-3 rounded-md`}
+                                    >
+                                        <span className='md:flex items-center ml-4'>{user?.name ? user.name : t.user}</span>
+                                    </div>
+                                    <div
+                                        className={`md:flex boder-2  border-amber-500 ml-4 w-full text-left flex items-center px-4 py-3 rounded-md hover:bg-gray-800`}
+                                    >
+                                        <SignOutButton />
+                                    </div>
+                                </>
+                            }
+                        </div>
 
-                            {/* Settings Tab */}
-                            <li className="mt-6 mb-1">
-                                <button
-                                    onClick={() => onTabChange('settings')}
-                                    className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'settings'
-                                        ? 'bg-gray-800 border-l-4 border-amber-500'
-                                        : 'hover:bg-gray-800'
-                                        }`}
-                                >
-                                    <span className="mr-3">⚙️</span>
-                                    <span>{t.tabSetting}</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
-
-                    {/* ... mobile profile section ... */}
+                    </div>
                 </div>
             </aside>
 

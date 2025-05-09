@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             isActive: user.isActive,
             imgs: user.imgs
         }
+        console.log('helo')
         setUser(user)
         localStorage.setItem('user', JSON.stringify(userData));
     };

@@ -2,6 +2,7 @@ import AdminContent from "@pages/contents/AdminContent";
 import home from "../pages/home"
 import user from "../pages/user"
 import Player from "@pages/player";
+import movie from "@pages/movie";
 
 export interface RouteType {
     path: string;
@@ -24,6 +25,10 @@ const routes: RouteType[] = [
     {
         path: '/player/:mediaId',
         page: Player
+    },
+    {
+        path: '/movie/:contentId',
+        page: movie
     }
 ]
 

@@ -58,7 +58,6 @@ const Player = () => {
 
     return (
         <div className="relative h-screen w-full bg-black">
-            {/* Loading Overlay */}
             {loading && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
                     <div className="flex flex-col items-center space-y-4">
@@ -68,7 +67,6 @@ const Player = () => {
                 </div>
             )}
 
-            {/* Error Overlay */}
             {error && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90">
                     <div className="text-center">
@@ -79,7 +77,6 @@ const Player = () => {
                 </div>
             )}
 
-            {/* Video Container */}
             {!loading && !error && hlsUrl && (
                 <div className="relative h-full w-full">
                     <video
@@ -100,7 +97,6 @@ const Player = () => {
                 </div>
             )}
 
-            {/* Selft Logo in Corner */}
             <button onClick={() => {
                 navigate(-1)
             }} className="btn bg-transparent border-0 shadow-none  text-2xl absolute left-8 top-8 z-50 font-bold text-amber-500">{t.appName}</button>

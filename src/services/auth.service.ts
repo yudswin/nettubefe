@@ -68,7 +68,7 @@ export const AuthService = {
     },
     register: async (formData: RegisterForm): Promise<Response> => {
         try {
-            const response = await client.post('/user/auth/register', formData);
+            const response = await client.post('api/user/auth/register', formData);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -79,7 +79,7 @@ export const AuthService = {
     },
     info: async (): Promise<InfoResponse> => {
         try {
-            const response = await client.get('/user/me');
+            const response = await client.get('api/user/me');
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
