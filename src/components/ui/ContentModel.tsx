@@ -472,7 +472,6 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                             fetchMedia()
                                         }}
                                         onDelete={(deletedId) => {
-                                            // Remove the deleted media from your list
                                         }}
                                     />
                                 ))}

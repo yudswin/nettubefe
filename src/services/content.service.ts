@@ -2,6 +2,9 @@ import axios from 'axios';
 import client from './http/client';
 import { SuccessResponse, ErrorResponse } from '../types/response';
 import { Content } from '../types/content';
+import { Cast } from '../types/cast';
+import { Director } from '../types/director';
+
 
 export type ContentListResponse = SuccessResponse<Content[]> | ErrorResponse;
 export type ContentResponse = SuccessResponse<Content> | ErrorResponse;
@@ -75,5 +78,55 @@ export const ContentService = {
             }
             throw new Error('Unknown error occurred');
         }
-    }
+    },    
+    getContentByPerson: async (personId: string): Promise<ContentListResponse> => {
+        try {
+            const [castResponse, directorResponse] = await Promise.all([
+                client.get<SuccessResponse<Cast[]> | ErrorResponse>(`/content/cast/v1/${personId}`),
+                client.get<SuccessResponse<Director[]> | ErrorResponse>(`/content/director/v1/${personId}`)
+            ]);
+
+            if (castResponse.data.status === 'failed') return castResponse.data;
+            if (directorResponse.data.status === 'failed') return directorResponse.data;
+
+            const castContentIds = (castResponse.data.result || []).map(cast => cast.contentId);
+            const directorContentIds = (directorResponse.data.result || []).map(director => director.contentId);
+            const uniqueContentIds = [...new Set([...castContentIds, ...directorContentIds])];
+
+            if (uniqueContentIds.length === 0) {
+                return {
+                    status: 'success',
+                    msg: "No content found for this person",
+                    result: []
+                };
+            }
+
+            const contentPromises = uniqueContentIds.map(contentId => 
+                client.get<SuccessResponse<Content> | ErrorResponse>(`/content/${contentId}`)
+            );
+            const contentResponses = await Promise.all(contentPromises);
+            const failedResponse = contentResponses.find(response => 
+                response.data.status === 'failed'
+            );
+            if (failedResponse) return failedResponse.data as ErrorResponse;
+            const contents = contentResponses.map(response => 
+                (response.data as SuccessResponse<Content>).result
+            );
+
+            return {
+                status: 'success',
+                msg: "Content retrieved successfully",
+                result: contents
+            };
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            return {
+                status: 'failed',
+                msg: 'Unknown error occurred',
+                error: 'Internal server error'
+            };
+        }
+    },
 };

@@ -3,6 +3,10 @@ import { PersonService } from "@services/person.service";
 import { FullPageLoader } from "@components/feedback/FullPageLoader";
 import { Toast } from "@components/feedback/Toast";
 import { Person } from "../../types/person";
+import { Departments, PersonDepartmentService } from "@services/junction/personDepartment.service";
+import { LoadingSpinner } from "@components/feedback/LoadingSpinner";
+import AddDepartmentModal from "@components/create/AddDepartmentModal";
+import { Department } from "../../types/department";
 
 interface PersonDetailModelProps {
     person: {
@@ -20,6 +24,7 @@ interface PersonDetailModelProps {
 const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDetailModelProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [showDepartmentConfirm, setShowDepartmentConfirm] = useState(false);
     const [formData, setFormData] = useState(person);
     const [isLoading, setIsLoading] = useState(false);
     const [toast, setToast] = useState<{
@@ -30,12 +35,42 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
     const [showProfileModal, setShowProfileModal] = useState(false);
     const [newProfilePath, setNewProfilePath] = useState("");
     const [previewProfilePath, setPreviewProfilePath] = useState("");
+    const [isDepartmentLoading, setIsDepartmentLoading] = useState(false);
+    const [departmentList, setDepartmentList] = useState<Departments[]>([]);
+    const [departmentToDelete, setDepartmentToDelete] = useState<Departments>();
+    const [showCreateModal, setShowCreateModal] = useState(false);
+
+
+    const fetchDepartment = async () => {
+        try {
+            setIsDepartmentLoading(true)
+            const response = await PersonDepartmentService.getDepartmentList(person._id)
+            if (response.status === 'success') {
+                setDepartmentList(response.result);
+            } else {
+                setToast({
+                    show: true,
+                    message: response.error || 'Failed to load media',
+                    type: 'error'
+                })
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsDepartmentLoading(false);
+        }
+    }
 
     useEffect(() => {
         setFormData(person);
         setIsEditing(false);
         setNewProfilePath(person.profilePath || "");
         setPreviewProfilePath(person.profilePath || "");
+        fetchDepartment()
     }, [person]);
 
 
@@ -46,6 +81,14 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
             [name]: value
         }));
     };
+
+    const handleNewDepartment = (newDepartment: Department) => {
+        const newDepartmentEntry = {
+            departmentId: newDepartment._id,
+            departmentName: newDepartment.name
+        };
+        setDepartmentList(prev => [...prev, newDepartmentEntry])
+    }
 
     const handleUpdate = async () => {
         try {
@@ -63,6 +106,30 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
             setToast({ show: true, message: 'updateError', type: 'error' });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleDepartmentDelete = async (departmentId?: string) => {
+        setShowDepartmentConfirm(false);
+        try {
+            setIsDepartmentLoading(true);
+            if (departmentId) {
+                const response = await PersonDepartmentService.removeDepartmentsFromPerson(formData._id, [departmentId]);
+
+                if (response.status === 'success') {
+                    setToast({ show: true, message: 'updateSuccess', type: 'success' });
+                    setDepartmentList(prev => prev.filter(
+                        department => department.departmentId !== departmentId
+                    ));
+                    setDepartmentToDelete(undefined)
+                } else {
+                    setToast({ show: true, message: response.msg || 'deleteFailed', type: 'error' });
+                }
+            }
+        } catch (error) {
+            setToast({ show: true, message: 'deleteError', type: 'error' });
+        } finally {
+            setIsDepartmentLoading(false);
         }
     };
 
@@ -201,6 +268,34 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
                         </div>
                     )}
 
+                    {showDepartmentConfirm && (
+                        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                            <div className="bg-gray-900 rounded-lg p-6 max-w-sm w-full">
+                                <h3 className="text-lg font-bold mb-4">Confirm</h3>
+                                <p className="text-gray-300 mb-6">Confirm delete this department: {departmentToDelete?.departmentName}?</p>
+                                <div className="flex justify-end gap-4">
+                                    <button
+                                        onClick={() => {
+                                            setShowDepartmentConfirm(false)
+                                            setDepartmentToDelete(undefined)
+                                        }}
+                                        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded"
+                                        disabled={isLoading}
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+                                        onClick={() => handleDepartmentDelete(departmentToDelete?.departmentId)}
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? 'deleting' : 'confirm'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {isEditing ? (
                         <input
                             name="slug"
@@ -265,7 +360,44 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
                     </dialog>
 
                 </div>
+                <div className="p-6 flex flex-wrap gap-2">
+                    {isDepartmentLoading && <LoadingSpinner />}
+                    {departmentList.map((department) => (
+                        <div
+                            key={department.departmentId}
+                            className="badge badge-outline badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer group"
+                            onClick={() => {
+                                setShowDepartmentConfirm(true)
+                                setDepartmentToDelete(department)
+                            }}
+                        >
+                            <span className="group-hover:hidden transition-opacity">
+                                {department.departmentName}
+                            </span>
+                            <span className="hidden group-hover:inline transition-opacity">
+                                Remove
+                            </span>
+                        </div>
+                    ))}
+                    <div
+                        className="badge badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer"
+                        onClick={() => {
+                            setShowCreateModal(true)
+                        }}
+                    >
+                        <span>
+                            + New Department
+                        </span>
+                    </div>
+                    <AddDepartmentModal
+                        isOpen={showCreateModal}
+                        onClose={() => setShowCreateModal(false)}
+                        onDepartmentAdded={handleNewDepartment}
+                        personId={person._id}
+                    />
+                </div>
             </div>
+
 
             {toast.show && (
                 <Toast

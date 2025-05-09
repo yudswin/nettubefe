@@ -3,6 +3,7 @@ import home from "../pages/home"
 import user from "../pages/user"
 import Player from "@pages/player";
 import movie from "@pages/movie";
+import person from "@pages/person";
 
 export interface RouteType {
     path: string;
@@ -29,6 +30,10 @@ const routes: RouteType[] = [
     {
         path: '/movie/:contentId',
         page: movie
+    },
+    {
+        path: '/person/:personId',
+        page: person
     }
 ]
 

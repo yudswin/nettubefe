@@ -68,5 +68,16 @@ export const PersonService = {
             }
             throw new Error('Unknown error occurred');
         }
-    }
+    },
+    getPersonById: async (personId: string): Promise<PersonResponse> => {
+        try {
+            const response = await client.get(`/person/${personId}`)
+            return response.data
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
 };

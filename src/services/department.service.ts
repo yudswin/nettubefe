@@ -50,5 +50,18 @@ export const DepartmentService = {
             }
             throw new Error('Unknown error occurred');
         }
+    },
+    searchDepartment: async (query: string): Promise<DepartmentListResponse> => {
+        try {
+            const response = await client.get('/department/v1/search', {
+                params: { q: query }
+            })
+            return response.data
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
     }
 }
