@@ -367,15 +367,17 @@ const PersonModel = ({ person, isOpen, onClose, onUpdate, onDelete }: PersonDeta
                             key={department.departmentId}
                             className="badge badge-outline badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer group"
                             onClick={() => {
-                                setShowDepartmentConfirm(true)
-                                setDepartmentToDelete(department)
+                                setShowDepartmentConfirm(true);
+                                setDepartmentToDelete(department);
                             }}
                         >
-                            <span className="group-hover:hidden transition-opacity">
-                                {department.departmentName}
-                            </span>
-                            <span className="hidden group-hover:inline transition-opacity">
-                                Remove
+                            <span className="relative inline-block">
+                                <span className="group-hover:opacity-0 transition-opacity">
+                                    {department.departmentName}
+                                </span>
+                                <span className="absolute left-0 top-0 w-full text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Remove
+                                </span>
                             </span>
                         </div>
                     ))}

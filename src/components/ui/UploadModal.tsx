@@ -45,7 +45,6 @@ export default function UploadModal({ contentId, onSuccess }: UploadModalProps) 
 
     return (
         <div className="mb-4">
-            {/* Modal trigger */}
             <button
                 className="btn  bg-amber-600 hover:bg-amber-700"
                 onClick={() => setIsOpen(true)}
@@ -53,7 +52,6 @@ export default function UploadModal({ contentId, onSuccess }: UploadModalProps) 
                 Upload Media
             </button>
 
-            {/* DaisyUI Modal */}
             <dialog className={`modal ${isOpen ? 'modal-open' : ''}`}>
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Upload Video</h3>

@@ -23,12 +23,7 @@ export const DirectorService = {
         directors: Omit<Director, 'contentId'>[]
     ): Promise<DirectorResponse> => {
         try {
-            const response = await client.post(`/content/director/${contentId}`, {
-                directors: directors.map(director => ({
-                    ...director,
-                    contentId
-                }))
-            });
+            const response = await client.post(`/content/director/${contentId}`, directors);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

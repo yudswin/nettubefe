@@ -62,17 +62,17 @@ const MediaCardAdmin = ({ media, onUpdate, onDelete }: MediaCardAdminProps) => {
 
     return (
         <div
-            onClick={() => {
-                navigate(`/player/${media._id}`)
-            }}
             key={media._id}
-            className="border rounded-lg p-4 gap-4 flex items-center flex-row hover:shadow-lg hover:bg-gray-800 transition-shadow duration-200 hover:cursor-pointer"
+            className="border rounded-lg p-4 gap-4 flex items-center flex-row hover:shadow-lg hover:bg-gray-800 transition-shadow duration-200"
         >
             <div
                 className="w-36 h-24 bg-cover bg-center rounded flex-shrink-0"
                 style={{ backgroundImage: `url()` }}
             >
-                <div className="bg-black bg-opacity-50 w-full h-full flex items-center justify-center opacity-100 transition-opacity">
+                <div className="bg-black bg-opacity-50 hover:cursor-pointer w-full h-full flex items-center justify-center opacity-100 transition-opacity"
+                    onClick={() => {
+                        navigate(`/player/${media._id}`)
+                    }}>
                     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                     </svg>

@@ -23,12 +23,7 @@ export const CastService = {
         castMembers: Omit<Cast, 'contentId'>[]
     ): Promise<CastResponse> => {
         try {
-            const response = await client.post(`/content/cast/${contentId}`, {
-                castMembers: castMembers.map(cast => ({
-                    ...cast,
-                    contentId
-                }))
-            });
+            const response = await client.post(`/content/cast/${contentId}`, castMembers);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

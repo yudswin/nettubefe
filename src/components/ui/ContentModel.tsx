@@ -4,10 +4,17 @@ import { FullPageLoader } from "@components/feedback/FullPageLoader";
 import { Toast } from "@components/feedback/Toast";
 import { Content } from "../../types/content";
 import { Media } from "../../types/media";
+import { Cast } from "../../types/cast";
+import { Director } from "../../types/director";
 import { MediaService } from "@services/media.service";
 import MediaCardAdmin from "./MediaCardAdmin";
 import { LoadingSpinner } from "@components/feedback/LoadingSpinner";
 import UploadModal from "./UploadModal";
+import { CastService } from "@services/cast.service";
+import AddCastModal from "@components/create/AddCastModal";
+import { DirectorService } from "@services/director.service";
+import AddDirectorModal from "@components/create/AddDirectorModal";
+import UpdateCastModal from "@components/create/UpdateCastModal";
 
 export interface ContentDetailModalProps {
     content: Content
@@ -31,11 +38,24 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
 
     const [isMediaLoading, setIsMediaLoading] = useState(false);
     const [mediaList, setMediaList] = useState<Media[]>([]);
-
+    const [castList, setCastList] = useState<Cast[]>([]);
 
     const [showBannerModal, setShowBannerModal] = useState(false);
     const [newBannerPath, setNewBannerPath] = useState("");
     const [previewBannerPath, setPreviewBannerPath] = useState("");
+
+    const [isDirectorsLoading, setIsDirectorsLoading] = useState(false);
+    const [directorList, setDirectorList] = useState<Director[]>([])
+    const [showDirectorConfirm, setShowDirectorConfirm] = useState(false);    const [directorToDelete, setDirectorToDelete] = useState<Director>();
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [selectedCast, setSelectedCast] = useState<Cast | null>(null);
+
+
+
+    const handleNewCast = (newCast: Cast) => {
+        setCastList(prev => [...prev, newCast])
+    }
 
 
     const fetchMedia = async () => {
@@ -59,6 +79,54 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
             });
         } finally {
             setIsMediaLoading(false);
+        }
+    }
+
+    const fetchCast = async () => {
+        try {
+            setIsLoading(true)
+            const response = await CastService.getAllCastByContent(content._id)
+            if (response.status === 'success') {
+                setCastList(response.result);
+            } else {
+                setToast({
+                    show: true,
+                    message: response.error || 'Failed to load casts',
+                    type: 'error'
+                })
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const fetchDirector = async () => {
+        try {
+            setIsDirectorsLoading(true)
+            const response = await DirectorService.getAllDirectorByContent(content._id)
+            if (response.status === 'success') {
+                setDirectorList(response.result);
+            } else {
+                setToast({
+                    show: true,
+                    message: response.error || 'Failed to load director',
+                    type: 'error'
+                })
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsDirectorsLoading(false);
         }
     }
 
@@ -105,6 +173,8 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
     useEffect(() => {
         if (isOpen == true) {
             fetchMedia();
+            fetchCast();
+            fetchDirector();
         }
     }, [isOpen]);
 
@@ -195,6 +265,40 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         }
     };
 
+    const handleDirectorDelete = async (personId?: string) => {
+        setShowDirectorConfirm(false);
+        try {
+            setIsDirectorsLoading(true);
+            if (personId) {
+                const response = await DirectorService.removeDirectorFromContent(formData._id, [personId]);
+
+                if (response.status === 'success') {
+                    setToast({ show: true, message: 'updateSuccess', type: 'success' });
+                    setDirectorList(prev => prev.filter(
+                        director => director.personId !== personId
+                    ));
+                    setDirectorToDelete(undefined)
+                } else {
+                    setToast({ show: true, message: response.msg || 'deleteFailed', type: 'error' });
+                }
+            }
+        } catch (error) {
+            setToast({ show: true, message: 'deleteError', type: 'error' });
+        } finally {
+            setIsDirectorsLoading(false);
+        }
+    };    const handleNewDirector = (newDirector: Director) => {
+        setDirectorList(prev => [...prev, newDirector])
+    }
+
+    const handleUpdateCast = (updatedCast: Cast) => {
+        setCastList(prev => prev.map(cast => 
+            cast.personId === updatedCast.personId 
+                ? { ...cast, character: updatedCast.character } 
+                : cast
+        ));
+    }
+
     const imageUrl = `https://media.themoviedb.org/${content.bannerPath}`
 
     if (!isOpen) return null; // Model state
@@ -207,6 +311,12 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         >
 
             <div className="modal-box bg-gray-900 w-11/12 max-w-5xl  rounded-lg  focus:outline-none">
+                <button
+                    onClick={onClose}
+                    className="absolute top-2 right-2 z-100 px-4 btn btn-sm btn-circle btn-ghost focus:outline-none"
+                >
+                    ✕
+                </button>
                 <div className="bg-gray-900 rounded-lg w-full overflow-hidden">
                     <div className="relative">
                         <div
@@ -215,12 +325,6 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                 backgroundImage: `url(${imageUrl})`,
                             }}
                         >
-                            <button
-                                onClick={onClose}
-                                className="absolute top-2 right-2 p-4 btn btn-sm btn-circle btn-ghost focus:outline-none"
-                            >
-                                ✕
-                            </button>
                         </div>
                     </div>
 
@@ -452,10 +556,118 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                 <p className="text-gray-300 mb-4">{formData.overview}</p>
                             )
                         )}
+                        <div className="flex flex-wrap gap-2">
+                            <h2 className="font-bold">Director:</h2>
+                            {isDirectorsLoading && <LoadingSpinner />}
+                            {directorList.map((director) => (
+                                <div
+                                    key={director.personId}
+                                    className="badge badge-outline badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer group"
+                                    onClick={() => {
+                                        setShowDirectorConfirm(true);
+                                        setDirectorToDelete(director);
+                                    }}
+                                >
+                                    <span className="relative inline-block">
+                                        <span className="group-hover:opacity-0 transition-opacity">
+                                            {director.personName}
+                                        </span>
+                                        <span className="absolute left-0 top-0 w-full text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            Remove
+                                        </span>
+                                    </span>
+                                </div>
+                            ))}
+                            <div
+                                className="badge badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer"
+                                onClick={() => {
+                                    setShowCreateModal(true)
+                                }}
+                            >
+                                <span>
+                                    + New Director
+                                </span>
+                            </div>
+                            <AddDirectorModal
+                                isOpen={showCreateModal}
+                                onClose={() => setShowCreateModal(false)}
+                                onDirectorAdded={handleNewDirector}
+                                contentId={content._id}
+                            />
+                        </div>
+
+                        {showDirectorConfirm && (
+                            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                                <div className="bg-gray-900 rounded-lg p-6 max-w-sm w-full">
+                                    <h3 className="text-lg font-bold mb-4">Confirm</h3>
+                                    <p className="text-gray-300 mb-6">Confirm delete this director: {directorToDelete?.personName}?</p>
+                                    <div className="flex justify-end gap-4">
+                                        <button
+                                            onClick={() => {
+                                                setShowDirectorConfirm(false)
+                                                setDirectorToDelete(undefined)
+                                            }}
+                                            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded"
+                                            disabled={isLoading}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded"
+                                            onClick={() => handleDirectorDelete(directorToDelete?.personId)}
+                                            disabled={isLoading}
+                                        >
+                                            {isLoading ? 'deleting' : 'confirm'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="pt-4">
                             <div className="border-t h-2 w-full border-amber-500"></div>
-                            <h3 className="text-xl ">Casts</h3>
+                            <div className="flex flex-row justify-between">
+                                <h3 className="text-xl mb-4">Casts</h3>
+                                <AddCastModal contentId={formData._id} onSuccess={handleNewCast} />
+                            </div>
+                            <div className="carousel carousel-center space-x-4 pb-2">                                {castList.map(cast => (
+                                    <div key={cast.personId} className="carousel-item w-24 hover:cursor-pointer"
+                                        onClick={() => {
+                                            setSelectedCast(cast);
+                                            setShowUpdateModal(true);
+                                        }}
+                                    >
+                                        <div className="flex flex-col items-center">
+                                            <div
+                                                className="avatar mb-2 group"
+                                            >
+                                                <div className="w-24 h-24 rounded-full">
+                                                    <img src={`https://media.themoviedb.org/${cast.profilePath}`} alt={cast.character} />
+                                                </div>
+                                                <div className="absolute rounded-full hover:bg-amber-200/50 w-24 h-24 group">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-8 opacity-0 absolute group-hover:opacity-100 transition-opacity top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <p className="text-center text-sm font-medium">{cast.personName}</p>
+                                            <p className="text-center text-xs text-gray-400">{cast.character}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                                {selectedCast && (
+                                    <UpdateCastModal
+                                        isOpen={showUpdateModal}
+                                        onClose={() => {
+                                            setShowUpdateModal(false);
+                                            setSelectedCast(null);
+                                        }}
+                                        contentId={content._id}
+                                        onSuccess={handleUpdateCast}
+                                        cast={selectedCast}
+                                    />
+                                )}
+                            </div>
                         </div>
                         <div className="pt-4">
                             <div className="border-t h-2 w-full border-amber-500"></div>
@@ -464,14 +676,15 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                 <UploadModal contentId={formData._id} onSuccess={() => fetchMedia()} />
                             </div>
                             <div className="flex-col gap-4 flex ">
-                                {isMediaLoading && <LoadingSpinner />}
-                                {mediaList.map((media) => (
+                                {isMediaLoading && <LoadingSpinner />}                                {mediaList.map((media) => (
                                     <MediaCardAdmin
+                                        key={media._id}
                                         media={media}
-                                        onUpdate={(updatedMedia) => {
-                                            fetchMedia()
+                                        onUpdate={() => {
+                                            fetchMedia();
                                         }}
-                                        onDelete={(deletedId) => {
+                                        onDelete={() => {
+                                            fetchMedia();
                                         }}
                                     />
                                 ))}
