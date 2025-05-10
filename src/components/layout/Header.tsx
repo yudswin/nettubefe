@@ -5,6 +5,7 @@ import AuthModel from '../ui/AuthModel';
 import { useAuth } from '@contexts/AuthContext';
 import SignOutButton from '@components/ui/SignOutButton';
 import SearchBox from '@components/search/SearchBox';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
     toggleSidebar: () => void;
@@ -24,6 +25,8 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
     const handleCloseModal = () => {
         setModalOpen(false);
     };
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         setIsAuth(isAuthenticated || !!user)
@@ -50,7 +53,11 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
             </button>
 
             {/* App name */}
-            <div className="text-2xl font-bold text-amber-500">{t.appName}</div>
+            <div className="text-2xl font-bold text-amber-500 hover:cursor-pointer"
+            onClick={() => navigate('/')}
+            >
+                {t.appName}
+            </div>
             <SearchBox />
             {/* Right section with language and user */}
             <div className="md:flex items-center gap-4 hidden">
