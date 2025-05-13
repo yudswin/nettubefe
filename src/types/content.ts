@@ -12,4 +12,6 @@ export interface Content {
     type: "movie" | "tvshow";
     status?: "finish" | "updating";
     publish: boolean;
+    rank?: number;
+    addedAt?: string;
 }

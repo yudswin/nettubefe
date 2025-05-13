@@ -635,7 +635,8 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                 <h3 className="text-xl mb-4">Casts</h3>
                                 <AddCastModal contentId={formData._id} onSuccess={handleNewCast} />
                             </div>
-                            <div className="carousel carousel-center space-x-4 pb-2">                                {castList.map(cast => (
+                            <div className="carousel carousel-center space-x-4 pb-2">                                
+                                {castList.map(cast => (
                                     <div key={cast.personId} className="carousel-item w-24 hover:cursor-pointer"
                                         onClick={() => {
                                             setSelectedCast(cast);

@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { Collection } from "../../types/collection";
+import { Content } from "../../types/content";
 import { CollectionService } from "../../services/collection.service";
 import { FullPageLoader } from "@components/feedback/FullPageLoader";
 import { Toast } from "@components/feedback/Toast";
+import AddCollectionContentModal from "@components/create/AddCollectionContentModal";
+import UpdateCollectionContentModel from "@components/create/UpdateCollectionContentModel";
 
 interface CollectionModelProps {
     collection: Collection;
@@ -17,16 +20,15 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [formData, setFormData] = useState(collection);
     const [isLoading, setIsLoading] = useState(false);
+    const [contentList, setContentList] = useState<Content[]>([]);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [selectedContent, setSelectedContent] = useState<Content | null>();
+
     const [toast, setToast] = useState<{
         show: boolean;
         message: string;
         type: 'success' | 'error';
     }>({ show: false, message: '', type: 'success' });
-
-    useEffect(() => {
-        setFormData(collection);
-        setIsEditing(false);
-    }, [collection]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -44,6 +46,37 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
             }));
         }
     };
+
+    const fetchContent = async () => {
+        try {
+            setIsLoading(true);
+            const response = await CollectionService.getCollectionContentById(collection._id);
+
+            if (response.status === 'success') {
+                setContentList(response.result)
+            } else {
+                setToast({
+                    show: true,
+                    message: response.msg || 'Failed to load content',
+                    type: 'error'
+                });
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+
+    const handleNewContent = (newContent: Content) => {
+        setContentList(prev => [...prev, newContent])
+    }
 
     const handleUpdate = async () => {
         try {
@@ -83,6 +116,28 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
             setIsLoading(false);
         }
     };
+
+    const handleDeleteContent = (deletedId: string) => {
+        setContentList(prev => prev.filter(content => content._id !== deletedId));
+        setShowUpdateModal(false)
+    };
+
+    const handleUpdateContent = (updatedContent: Content) => {
+        setContentList(prev => prev.map(content =>
+            content._id === updatedContent._id
+                ? { ...content }
+                : content
+        ));
+    }
+
+    useEffect(() => {
+        fetchContent()
+    }, []);
+
+    useEffect(() => {
+        setFormData(collection);
+        setIsEditing(false);
+    }, [collection]);
 
     if (!isOpen) return null;
 
@@ -166,16 +221,16 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
                     ) : (
                         <div className="text-gray-300">
                             <p className="mb-2"><span className="font-semibold">Slug:</span> {formData.slug}</p>
-                            <p className="mb-2"><span className="font-semibold">Type:</span>
+                            <div className="mb-2"><span className="font-semibold">Type:</span>
                                 <div className={`badge p-2 mx-2 font-bold badge-${collection.type === 'hot' ? 'primary' : 'secondary'}`}>
                                     {collection.type}
                                 </div>
-                            </p>
+                            </div>
                             <p className="mb-2 flex gap-2"><span className="font-semibold">Status:</span> {formData.publish ? (
                                 <span className="text-success flex flex-row gap-2">
                                     <span>Published</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
                                 </span>
                             ) : (
@@ -197,7 +252,7 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
                                 className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-full text-white"
                                 disabled={isLoading}
                             >
-                                Delete
+                                Delete Collection
                             </button>
                         )}
                         <button
@@ -205,7 +260,7 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
                             className="px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded-full text-white"
                             disabled={isLoading}
                         >
-                            {isLoading ? 'Saving...' : (isEditing ? 'Save' : 'Edit')}
+                            {isLoading ? 'Saving...' : (isEditing ? 'Save' : 'Edit Collection')}
                         </button>
                         {isEditing && (
                             <button
@@ -216,6 +271,58 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
                                 Cancel
                             </button>
                         )}
+                    </div>
+
+                    <div className="pt-4">
+                        <div className="border-t h-2 w-full border-amber-500"></div>
+                        <div className="flex flex-row justify-between">
+                            <h3 className="text-xl mb-4">Contents</h3>
+                            <AddCollectionContentModal collectionId={collection._id} onSuccess={handleNewContent} />
+                        </div>
+
+                        <section className="mb-8">
+                            <div className="flex space-x-4 overflow-x-auto pb-4">
+                                {contentList.map((content) => (
+                                    <div
+                                        key={content._id}
+                                        className="w-44 flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
+                                        onClick={() => {
+                                            setSelectedContent(content);
+                                            setShowUpdateModal(true);
+                                        }}
+                                    >
+                                        <div
+                                            className="h-64 rounded-md mb-2 bg-gray-800 relative bg-cover bg-center"
+                                            style={{ backgroundImage: `url(https://media.themoviedb.org/${content.bannerPath})` }}
+                                        >
+                                            {content.publish && (
+                                                <div className="absolute top-2 right-2 badge badge-warning">
+                                                    new
+                                                </div>
+                                            )}
+                                            {content.type === "tvshow" && content.status === "updating" && (
+                                                <div className="absolute bottom-2 left-2 badge badge-info">
+                                                    updating
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="font-medium text-sm">{content.title}</div>
+                                        {content.year && <div className="text-xs text-gray-400">{content.year}</div>}
+                                    </div>
+                                ))}
+                                {selectedContent && (
+                                    <UpdateCollectionContentModel
+                                        isOpen={showUpdateModal}
+                                        onClose={() => setShowUpdateModal(false)}
+                                        onSuccess={handleUpdateContent}
+                                        onDelete={handleDeleteContent}
+                                        content={selectedContent}
+                                        collectionId={collection._id}
+                                    />
+                                )}
+                            </div>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -254,6 +361,8 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
             )}
 
             {isLoading && <FullPageLoader />}
+
+
         </div>
     );
 };
