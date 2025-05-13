@@ -265,6 +265,11 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         }
     };
 
+    const handleDeleteCast = (deletedId: string) => {
+        setCastList(prev => prev.filter(cast => cast.personId !== deletedId));
+        setShowUpdateModal(false)
+    };
+
     const handleDirectorDelete = async (personId?: string) => {
         setShowDirectorConfirm(false);
         try {
@@ -664,6 +669,7 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                         }}
                                         contentId={content._id}
                                         onSuccess={handleUpdateCast}
+                                        onDelete={handleDeleteCast}
                                         cast={selectedCast}
                                     />
                                 )}

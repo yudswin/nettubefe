@@ -73,7 +73,7 @@ const SearchResults = ({ results, persons, onResultClick }: SearchResultsProps) 
                             <div className="w-24 h-24">
                                 <img
                                     src={`https://media.themoviedb.org/${person.profilePath}`}
-                                    alt="Banner preview"
+                                    alt={`${person.name}`}
                                     className="w-full h-full object-cover rounded-full"
                                 />
                             </div>
