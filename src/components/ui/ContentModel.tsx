@@ -57,7 +57,6 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         setCastList(prev => [...prev, newCast])
     }
 
-
     const fetchMedia = async () => {
         try {
             setIsMediaLoading(true)

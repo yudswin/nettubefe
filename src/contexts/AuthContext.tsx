@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-interface User {
+export interface User {
+    _id: string;
     name: string;
     email: string;
     avatarId: string | null;
@@ -8,7 +9,20 @@ interface User {
     gender: string;
     isVerified: boolean;
     isActive: boolean;
-    imgs: string | null;
+    imgs: ImageData | null;
+}
+
+export interface ImageData {
+    _id: string;
+    imgurId: string;
+    deleteHash: string;
+    path: string;
+    type: string;
+    metadata: {
+        size: number;
+        width: number;
+        height: number;
+    };
 }
 
 interface Tokens {
@@ -56,6 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const info = (user: User) => {
         const userData = {
+            _id: user._id,
             name: user.name,
             email: user.email,
             avatarId: user.avatarId,
@@ -65,7 +80,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             isActive: user.isActive,
             imgs: user.imgs
         }
-        console.log('helo')
         setUser(user)
         localStorage.setItem('user', JSON.stringify(userData));
     };

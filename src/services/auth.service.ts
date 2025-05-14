@@ -1,5 +1,6 @@
 import axios from 'axios';
 import client from './http/client';
+import { ImageData } from '@contexts/AuthContext';
 
 interface LoginCredentials {
     email: string;
@@ -27,6 +28,7 @@ interface SuccessInfoResponse {
     msg: string;
     result: {
         user: {
+            _id: string
             name: string;
             email: string;
             avatarId: string | null;
@@ -35,7 +37,7 @@ interface SuccessInfoResponse {
             gender: string;
             isVerified: boolean;
             isActive: boolean;
-            imgs: any | null;
+            imgs: ImageData
         };
     };
 }

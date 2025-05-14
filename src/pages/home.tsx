@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import { LibraryContent } from './contents/LibraryContent'
 import AdminContent from './contents/AdminContent'
+import SettingContent from './contents/SettingContent'
 
 const HomeContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -54,8 +55,7 @@ const HomeContent = () => {
 
                 <main className="p-4 md:p-8 overflow-y-auto">
                     {activeTab === 'settings' ? (
-                        // <SettingsContent />
-                        <></>
+                        <SettingContent />
                     ) : activeTab === 'admin' ? (
                         <AdminContent />
                     ) : activeTab === 'library' ? (

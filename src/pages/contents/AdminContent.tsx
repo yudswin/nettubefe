@@ -24,23 +24,6 @@ const AdminContent = () => {
         { id: 'collection', label: 'Collection Management' }
     ];
 
-    // Simulated API calls
-    const simulateLoad = async (fullPage = false) => {
-        if (fullPage) setIsFullPageLoading(true);
-        else setIsLoading(true);
-
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        if (fullPage) setIsFullPageLoading(false);
-        else setIsLoading(false);
-    };
-
-    // Simulate initial data loading
-    // useEffect(() => {
-    //     setIsFullPageLoading(true);
-    //     simulateLoad(true);
-    // }, [activeEntity]);
-
     return (
         <div className="p-6 w-full">
 

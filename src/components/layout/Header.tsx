@@ -32,6 +32,10 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
         setIsAuth(isAuthenticated || !!user)
     }, [isAuthenticated, user])
 
+    const imageUrl = user?.imgs
+        ? user.imgs.path
+        : "/defaultProfile.jpg";
+
 
     return (
         <header className="fixed top-0 left-0 right-0 flex justify-between items-center py-4 px-4 md:px-8 bg-gray-950 h-16 border-b border-gray-800 z-30">
@@ -54,7 +58,7 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
 
             {/* App name */}
             <div className="text-2xl font-bold text-amber-500 hover:cursor-pointer"
-            onClick={() => navigate('/')}
+                onClick={() => navigate('/')}
             >
                 {t.appName}
             </div>
@@ -85,10 +89,13 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
                     </>
                     :  // Signed In
                     <>
-                        <div className="flex items-center space-x-1 text-sm bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded-md">
+                        <div className="flex items-center space-x-1 gap-2 text-sm bg-gray-800 px-3 py-1 rounded-md">
+                            <div className="avatar">
+                                <div className="w-6 rounded-full">
+                                    <img src={imageUrl} />
+                                </div>
+                            </div>
                             <span>{user?.name ? user.name : t.user}</span>
-                        </div>
-                        <div>
                             <SignOutButton />
                         </div>
                     </>

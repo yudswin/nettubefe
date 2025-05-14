@@ -46,12 +46,16 @@ export const Sidebar = ({
         setModalOpen(false);
     };
 
+    const imageUrl = user?.imgs
+        ? user.imgs.path
+        : "/defaultProfile.jpg";
+
     return (
         <>
             {/* Mobile overlay when sidebar is open */}
             {isOpen && (
                 <div
-                    className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-10"
+                    className="fixed inset-0 bg-black/50 z-10"
                     onClick={toggleSidebar}
                 ></div>
             )}
@@ -114,7 +118,7 @@ export const Sidebar = ({
                                 )}
 
                                 {/* Settings Tab */}
-                                <li className="mt-6 mb-1">
+                                <li className={`mt-6 mb-1 ${user ? '' : 'hidden'}`}>
                                     <button
                                         onClick={() => onTabChange('settings')}
                                         className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'settings'
@@ -154,6 +158,11 @@ export const Sidebar = ({
                                     <div
                                         className={`w-full text-left flex items-center px-4 py-3 rounded-md`}
                                     >
+                                        <div className="avatar">
+                                            <div className="w-6 rounded-full">
+                                                <img src={imageUrl} />
+                                            </div>
+                                        </div>
                                         <span className='md:flex items-center ml-4'>{user?.name ? user.name : t.user}</span>
                                     </div>
                                     <div
