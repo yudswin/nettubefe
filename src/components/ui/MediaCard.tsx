@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLanguage } from '@contexts/LanguageContext';
 import MovieDetailModal from './MovieDetailModal';
 import { Movie } from '../../types/media';
+import { Content } from '../../types/content';
 
 interface MediaCardProps {
     id: number;
@@ -11,6 +12,7 @@ interface MediaCardProps {
     added?: string;
     type: 'continue' | 'recent';
     movieData?: Movie; 
+    contentData?: Content;
 }
 
 const MediaCard = ({ id, title, image, progress, added, type, movieData }: MediaCardProps) => {

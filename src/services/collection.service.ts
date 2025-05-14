@@ -4,13 +4,45 @@ import { SuccessResponse, ErrorResponse } from '../types/response';
 import { Collection } from '../types/collection';
 import { ContentListResponse } from './content.service';
 
+interface Count {
+    total: number
+}
+
 export type CollectionListResponse = SuccessResponse<Collection[]> | ErrorResponse;
 export type CollectionResponse = SuccessResponse<Collection> | ErrorResponse;
+export type CountResponse = SuccessResponse<Count> | ErrorResponse;
+
 
 export const CollectionService = {
     getCollectionList: async (): Promise<CollectionListResponse> => {
         try {
             const response = await client.get('/collection/list');
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+
+    getTotal: async (): Promise<CountResponse> => {
+        try {
+            const response = await client.get('/collection/total');
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+
+    getHotCollections: async (): Promise<CollectionListResponse> => {
+        try {
+            const response = await client.get('/collection/list', {
+                data: { limit: 5 }
+            })
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -110,6 +142,17 @@ export const CollectionService = {
     removeContentFromCollection: async (collectionId: string, contentId: string): Promise<CollectionResponse> => {
         try {
             const response = await client.delete(`/collection/${collectionId}/content/${contentId}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+    getCollectionBySlug: async (slug: string): Promise<CollectionResponse> => {
+        try {
+            const response = await client.get(`/collection/slug/${slug}`);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

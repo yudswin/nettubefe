@@ -1,9 +1,11 @@
 import AdminContent from "@pages/contents/AdminContent";
 import home from "../pages/home"
-import user from "../pages/user"
 import Player from "@pages/player";
 import movie from "@pages/movie";
 import person from "@pages/person";
+import collection from "@pages/collection";
+import collectionList from "@pages/collectionList";
+
 
 export interface RouteType {
     path: string;
@@ -14,10 +16,6 @@ const routes: RouteType[] = [
     {
         path: '/',
         page: home,
-    },
-    {
-        path: '/user',
-        page: user
     },
     {
         path: '/admin',
@@ -34,6 +32,14 @@ const routes: RouteType[] = [
     {
         path: '/person/:personId',
         page: person
+    },
+    {
+        path: '/collection/:slug',
+        page: collection
+    },
+    {
+        path: '/collection',
+        page: collectionList,
     }
 ]
 

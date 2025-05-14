@@ -87,26 +87,56 @@ const CollectionTab = () => {
                 onCollectionCreated={handleCollectionCreated}
             />
 
-            <div className="flex flex-wrap gap-8">
-                {collectionList.length > 0 ? (
-                    collectionList.map((collection) => (
-                        <CollectionCard
-                            key={collection._id}
-                            _id={collection._id}
-                            name={collection.name}
-                            slug={collection.slug}
-                            description={collection.description}
-                            type={collection.type}
-                            publish={collection.publish}
-                            onDelete={handleDeleteCollection}
-                            onUpdate={handleUpdateCollection}
-                        />
-                    ))
-                ) : (
-                    !isLoading && <div className="text-gray-400">No content available</div>
-                )}
-            </div>
-        </div >
+            <section className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl mb-6">Hot Collections</h3>
+                </div>
+                <div className="flex space-x-4 overflow-x-auto pb-4">
+                    {collectionList.length > 0 ? (
+                        collectionList.filter(item => item.type === 'hot').map((collection) => (
+                            <CollectionCard
+                                key={collection._id}
+                                _id={collection._id}
+                                name={collection.name}
+                                slug={collection.slug}
+                                description={collection.description}
+                                type={collection.type}
+                                publish={collection.publish}
+                                onDelete={handleDeleteCollection}
+                                onUpdate={handleUpdateCollection}
+                            />
+                        ))
+                    ) : (
+                        !isLoading && <div className="text-gray-400">No content available</div>
+                    )}
+                </div>
+            </section>
+            <section className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl mb-6">Topic Collections</h3>
+                </div>
+                <div className="flex space-x-4 overflow-x-auto pb-4">
+                    {collectionList.length > 0 ? (
+                        collectionList.filter(item => item.type === 'topic').map((collection) => (
+                            <CollectionCard
+                                key={collection._id}
+                                _id={collection._id}
+                                name={collection.name}
+                                slug={collection.slug}
+                                description={collection.description}
+                                type={collection.type}
+                                publish={collection.publish}
+                                onDelete={handleDeleteCollection}
+                                onUpdate={handleUpdateCollection}
+                            />
+                        ))
+                    ) : (
+                        !isLoading && <div className="text-gray-400">No content available</div>
+                    )}
+                </div>
+                
+            </section>
+        </div>
     );
 }
 
