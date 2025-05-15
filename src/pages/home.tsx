@@ -8,11 +8,14 @@ import { LibraryContent } from './contents/LibraryContent'
 import AdminContent from './contents/AdminContent'
 import SettingContent from './contents/SettingContent'
 import { Collection } from "../types/collection";
+import { Content } from "../types/content";
 import { CollectionService } from '@services/collection.service'
 import { LoadingSpinner } from '@components/feedback/LoadingSpinner'
 import { Toast } from '@components/feedback/Toast'
 import CollectionCard from '@components/user/CollectionCard'
 import { useNavigate } from 'react-router-dom'
+import TopicContentCard from '@components/user/TopicContentCard'
+import TopicContentRow from '@components/user/TopicContentRow'
 
 const HomeContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,6 +27,7 @@ const HomeContent = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [collectionList, setCollectionList] = useState<Collection[]>([]);
+    const [collectionTopicList, setCollectionTopicList] = useState<Content[]>([]);
     const [collectionCount, setCollectionCount] = useState(0);
 
     const [toast, setToast] = useState<{
@@ -39,6 +43,27 @@ const HomeContent = () => {
         'bg-gradient-to-br from-emerald-500 to-teal-600',
         'bg-gradient-to-br from-purple-400 to-indigo-500',
         'bg-gradient-to-br from-orange-300 to-red-400',
+    ];
+
+    const groupedByCollection = collectionTopicList.reduce((groups, content) => {
+        const slug = content.collectionSlug || 'uncategorized';
+        if (!groups[slug]) {
+            groups[slug] = {
+                collectionName: content.collectionName || 'Uncategorized',
+                collectionSlug: slug,
+                contents: []
+            };
+        }
+        groups[slug].contents.push(content);
+        return groups;
+    }, {} as Record<string, { collectionName: string; collectionSlug: string; contents: Content[] }>);
+
+    const collectionGroups = Object.values(groupedByCollection);
+
+    const topicGradients = [
+        'from-blue-400 to-white',
+        'from-red-400 to-white',
+        'from-orange-400 to-white',
     ];
 
     // Mock data for demonstration
@@ -96,8 +121,45 @@ const HomeContent = () => {
         }
     };
 
+    const fetchTopicCollection = async () => {
+        try {
+            setIsLoading(true);
+            const response = await CollectionService.getTopicCollectionContents();
+
+            if (response.status === 'success') {
+                setCollectionTopicList(response.result);
+            } else {
+                setToast({
+                    show: true,
+                    message: response.msg || 'Failed to load collection',
+                    type: 'error'
+                });
+            }
+
+            const responseCount = await CollectionService.getTotal();
+            if (responseCount.status === 'success') {
+                setCollectionCount(responseCount.result.total);
+            } else {
+                setToast({
+                    show: true,
+                    message: response.msg || 'Failed to load collection total',
+                    type: 'error'
+                });
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchCollection();
+        fetchTopicCollection();
     }, []);
 
     return (
@@ -133,7 +195,7 @@ const HomeContent = () => {
                                 </div>
                             </section>
 
-                            <section className="mb-8">
+                            <section className={`mb-8 ${collectionList.length == 0 ? "hidden" : ""}`}>
                                 {isLoading && <LoadingSpinner />}
                                 {toast.show && (
                                     <Toast
@@ -146,7 +208,7 @@ const HomeContent = () => {
                                     <h2 className="text-xl font-bold">What are you looking for today?</h2>
                                 </div>
 
-                                <div className='flex flex-row gap-3'>
+                                <div className={`flex flex-row gap-3`}>
                                     {collectionList.length > 0 ? (
                                         collectionList.filter(item => item.type === 'hot').map((collection, index) => (
                                             <CollectionCard
@@ -171,8 +233,26 @@ const HomeContent = () => {
                                 </div>
                             </section>
 
+                            <section className="mb-8 p-8 bg-gradient-to-b from-[#272b3a] to-gray-900 rounded-2xl">
+                                {isLoading ? (
+                                    <div className="p-8 flex justify-center">
+                                        <LoadingSpinner />
+                                    </div>
+                                ) : collectionGroups.length > 0 ? (
+                                    collectionGroups.map((group, index) => (
+                                        <TopicContentRow title={group.collectionName} slug={group.collectionSlug} items={group.contents} className={`${topicGradients[index % gradients.length]}`}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="p-8 text-gray-400 text-center">
+                                        No collections available
+                                    </div>
+                                )}
+                            </section>
+
                             <ContentRow title={t.continueWatching} items={continueWatching} type="continue" />
                             <ContentRow title={t.recentlyAdded} items={recentlyAdded} type="recent" />
+
                         </>
                     )}
                 </main>

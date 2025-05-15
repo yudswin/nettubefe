@@ -1,4 +1,5 @@
 export interface Content {
+    contentId?: string;
     _id: string;
     title: string;
     slug?: string;
@@ -14,4 +15,7 @@ export interface Content {
     publish: boolean;
     rank?: number;
     addedAt?: string;
+    collectionId?: string;
+    collectionName?: string;
+    collectionSlug?: string;
 }

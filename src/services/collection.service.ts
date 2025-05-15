@@ -160,5 +160,21 @@ export const CollectionService = {
             }
             throw new Error('Unknown error occurred');
         }
-    }
+    },
+    getTopicCollectionContents: async (): Promise<ContentListResponse> => {
+        try {
+            const response = await client.get(`/collection/content/topic`, {
+                data: {
+                    limitContents: 3,
+                    limitCollections: 3
+                }
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
 };

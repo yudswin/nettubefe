@@ -22,7 +22,8 @@ const SearchBox = ({
         const personResponse = await PersonService.searchPerson(searchTerm);
 
         if (response.status === 'success') {
-            setResults(response.result.filter(item => item.publish));
+            // setResults(response.result.filter(item => item.publish));
+            setResults(response.result);
         }
 
         if (personResponse.status === 'success') {

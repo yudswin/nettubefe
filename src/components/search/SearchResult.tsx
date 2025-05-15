@@ -19,6 +19,8 @@ const SearchResults = ({ results, persons, onResultClick }: SearchResultsProps) 
             onResultClick(undefined, person);
         }
     }
+
+
     return (
         <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-140 overflow-y-auto z-50">
             {results && results.length > 0 && (
@@ -32,7 +34,7 @@ const SearchResults = ({ results, persons, onResultClick }: SearchResultsProps) 
                         >
                             <div className="w-24 h-24">
                                 <img
-                                    src={`https://media.themoviedb.org/${content.bannerPath}`}
+                                    src={`${content.bannerPath ? content.bannerPath : "/defaultContent.png"}`}
                                     alt={content.title}
                                     className="w-full h-full object-cover rounded-xl"
                                 />

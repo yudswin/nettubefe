@@ -213,7 +213,7 @@ const movie = () => {
                             <div className="hero mb-8"  >
                                 <div className="hero-overlay bg-opacity-60 rounded-lg"
                                     style={{
-                                        backgroundImage: `url(https://media.themoviedb.org/${content.bannerPath || content.thumbnailPath})`,
+                                        backgroundImage: `url(${content.bannerPath})`,
                                         filter: 'blur(4px)',
                                         opacity: 0.5,
                                         backgroundSize: 'cover',
@@ -222,7 +222,7 @@ const movie = () => {
                                 ></div>
                                 <div className="hero-content justify-contnet flex-col lg:flex-row">
                                     <img
-                                        src={`https://media.themoviedb.org/${content.bannerPath}`}
+                                        src={`${content.bannerPath}`}
                                         className="max-w-sm rounded-lg shadow-2xl"
                                         alt={content.title}
                                     />

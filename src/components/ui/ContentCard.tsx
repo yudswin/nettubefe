@@ -33,7 +33,7 @@ const ContentCard = ({
     };
 
     const imageUrl = bannerPath
-        ? `https://media.themoviedb.org/${bannerPath}`
+        ? bannerPath
         : "/defaultContent.png";
 
     return (
