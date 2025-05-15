@@ -208,12 +208,13 @@ const HomeContent = () => {
                                     <h2 className="text-xl font-bold">What are you looking for today?</h2>
                                 </div>
 
-                                <div className={`flex flex-row gap-3`}>
+                                <div className={`flex flex-row gap-3 py-5 px-4 space-x-4 overflow-x-auto overflow-y-clip scrollbar-hide`}>
                                     {collectionList.length > 0 ? (
                                         collectionList.filter(item => item.type === 'hot').map((collection, index) => (
                                             <CollectionCard
                                                 name={collection.name}
                                                 slug={collection.slug}
+                                                index={index % collectionList.length}
                                                 className={`${gradients[index % gradients.length]}/50`}
                                             />
                                         ))
@@ -221,11 +222,11 @@ const HomeContent = () => {
                                         !isLoading && <div className="text-gray-400">No content available</div>
                                     )}
                                     <div
-                                        className="w-44 flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
+                                        className="w-66 flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
                                         onClick={() => navigate('/collection')}
                                     >
-                                        <div className={`h-32 rounded-lg mb-2 bg-gray-800 flex items-center justify-center  `}>
-                                            <span className="text-white  font-medium px-2 text-center">
+                                        <div className={`h-48 rounded-lg mb-2 bg-gray-800 flex items-center justify-center  `}>
+                                            <span className="text-white text-2xl font-medium px-2 text-center">
                                                 +{collectionCount - 5} Collections
                                             </span>
                                         </div>

@@ -451,7 +451,7 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                     </label>
                                     <div className="aspect-square w-full bg-gray-800 rounded-lg overflow-hidden">
                                         <img
-                                            src={`https://media.themoviedb.org/${previewBannerPath}`}
+                                            src={previewBannerPath}
                                             alt="Profile preview"
                                             className="w-full h-full object-cover"
                                         />
@@ -647,7 +647,7 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                                 className="avatar mb-2 group"
                                             >
                                                 <div className="w-24 h-24 rounded-full">
-                                                    <img src={`https://media.themoviedb.org/${cast.profilePath}`} alt={cast.character} />
+                                                    <img src={cast.profilePath} alt={cast.character} />
                                                 </div>
                                                 <div className="absolute rounded-full hover:bg-amber-200/50 w-24 h-24 group">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-8 opacity-0 absolute group-hover:opacity-100 transition-opacity top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">

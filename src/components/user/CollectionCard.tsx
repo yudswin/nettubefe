@@ -5,12 +5,14 @@ interface CollectionCardProps {
     name: string,
     slug: string,
     className?: string;
+    index?: number
 }
 
 const CollectionCard = ({
     name,
     slug,
     className = '',
+    index
 }: CollectionCardProps) => {
     const navigate = useNavigate()
     const handleNavigate = () => {
@@ -20,11 +22,12 @@ const CollectionCard = ({
     return (
         <>
             <div
-                className="w-44 flex-shrink-0 overflow-hidden cursor-pointer transition-transform hover:scale-105 hover:rotate-6"
+                className={`w-66 flex-shrink-0 overflow-hidden cursor-pointer transition-all hover:scale-105 hover:${(index || 10) % 2 == 1 ? "rotate-6" : "-rotate-6"} group`}
                 onClick={handleNavigate}
             >
-                <div className={`h-32 rounded-lg mb-2 bg-gray-800 flex items-center justify-center ${className}`}>
-                    <span className="text-white font-medium px-2 text-center">{name}</span>
+                <div className={`h-48 rounded-lg mb-2 flex-col bg-gray-800 hover:bg-white/50 hover:border-1 border-white transition-colors ease-linear delay-75  flex items-center justify-center ${className}`}>
+                    <div className="text-white text-xl font-medium px-2 text-center">{name}</div>
+                    <div className={`transition-all ease-in-out delay-75 hidden ${index != undefined ? "group-hover:flex" : ""}`}>Check it out!</div>
                 </div>
             </div>
         </>
