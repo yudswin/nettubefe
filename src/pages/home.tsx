@@ -14,7 +14,6 @@ import { LoadingSpinner } from '@components/feedback/LoadingSpinner'
 import { Toast } from '@components/feedback/Toast'
 import CollectionCard from '@components/user/CollectionCard'
 import { useNavigate } from 'react-router-dom'
-import TopicContentCard from '@components/user/TopicContentCard'
 import TopicContentRow from '@components/user/TopicContentRow'
 
 const HomeContent = () => {
@@ -29,6 +28,10 @@ const HomeContent = () => {
     const [collectionList, setCollectionList] = useState<Collection[]>([]);
     const [collectionTopicList, setCollectionTopicList] = useState<Content[]>([]);
     const [collectionCount, setCollectionCount] = useState(0);
+
+    const [isHeadlineLoading, setIsHeadlineLoading] = useState(false);
+    const [headlineCollection, setHeadlineCollection] = useState<Collection>();
+    const [headlineContents, setHeadlineContents] = useState<Content[]>([]);
 
     const [toast, setToast] = useState<{
         show: boolean;
@@ -85,6 +88,19 @@ const HomeContent = () => {
         setSidebarOpen(!sidebarOpen);
     }
 
+    useEffect(() => {
+        if (collectionList && collectionList.length > 0) {
+            console.log('collectionList', collectionList)
+        }
+    }, [collectionList])
+
+    useEffect(() => {
+        if (collectionTopicList && collectionTopicList.length > 0) {
+            console.log('collectionTopicList', collectionTopicList)
+        }
+    }, [collectionTopicList])
+
+
     const fetchCollection = async () => {
         try {
             setIsLoading(true);
@@ -92,6 +108,7 @@ const HomeContent = () => {
 
             if (response.status === 'success') {
                 setCollectionList(response.result);
+
             } else {
                 setToast({
                     show: true,
@@ -157,9 +174,44 @@ const HomeContent = () => {
         }
     };
 
+    const fetchHeadlineCollectionAndContent = async () => {
+        try {
+            setIsHeadlineLoading(true);
+            const response = await CollectionService.getHeadlineCollection();
+            if (response.status === 'success') {
+                setHeadlineCollection(response.result);
+                const contents = await CollectionService.getCollectionContentById(response.result._id, 5)
+                if (contents.status === 'success') {
+                    setHeadlineContents(contents.result)
+                } else {
+                    setToast({
+                        show: true,
+                        message: response.msg || 'Failed to load contents',
+                        type: 'error'
+                    });
+                }
+            } else {
+                setToast({
+                    show: true,
+                    message: response.msg || 'Failed to load collection',
+                    type: 'error'
+                });
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsHeadlineLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchCollection();
         fetchTopicCollection();
+        fetchHeadlineCollectionAndContent();
     }, []);
 
     return (
@@ -188,7 +240,8 @@ const HomeContent = () => {
                         <LibraryContent libraryId={selectedLibrary} />
                     ) : (
                         <>
-                            <section className="mb-8 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 h-48 md:h-72 flex items-center px-6 md:px-8">
+                            <section className="mb-8 rounded-lg bg-gradient-to-r from-amber-500 to-orange-600 h-48 md:h-108 flex items-center px-6 md:px-8">
+                                {isHeadlineLoading && <LoadingSpinner />}
                                 <div>
                                     <h1 className="text-2xl md:text-4xl font-bold mb-2">{t.welcomeBack}</h1>
                                     <p className="text-base md:text-xl">{t.continueWatchingPrompt}</p>
@@ -210,8 +263,9 @@ const HomeContent = () => {
 
                                 <div className={`flex flex-row gap-3 py-5 px-4 space-x-4 overflow-x-auto overflow-y-clip scrollbar-hide`}>
                                     {collectionList.length > 0 ? (
-                                        collectionList.filter(item => item.type === 'hot').map((collection, index) => (
+                                        collectionList.filter(item => item.type === 'hot').slice(0, 5).map((collection, index) => (
                                             <CollectionCard
+                                                key={collection._id || collection.slug || `collection-${index}`}
                                                 name={collection.name}
                                                 slug={collection.slug}
                                                 index={index % collectionList.length}
@@ -241,7 +295,12 @@ const HomeContent = () => {
                                     </div>
                                 ) : collectionGroups.length > 0 ? (
                                     collectionGroups.map((group, index) => (
-                                        <TopicContentRow title={group.collectionName} slug={group.collectionSlug} items={group.contents} className={`${topicGradients[index % gradients.length]}`}
+                                        <TopicContentRow
+                                            key={group.collectionSlug || `collection-group-${index}`}
+                                            title={group.collectionName}
+                                            slug={group.collectionSlug}
+                                            items={group.contents}
+                                            className={`${topicGradients[index % gradients.length]}`}
                                         />
                                     ))
                                 ) : (

@@ -23,7 +23,7 @@ const CollectionTab = () => {
 
     const handleUpdateCollection = (updateCollection: Collection) => {
         setCollectionList(prev => prev.map(collection =>
-            collection._id === collection._id ? updateCollection : collection
+            collection._id === updateCollection._id ? updateCollection : collection
         ));
     };
 
@@ -134,7 +134,30 @@ const CollectionTab = () => {
                         !isLoading && <div className="text-gray-400">No content available</div>
                     )}
                 </div>
-                
+            </section>
+            <section className="mb-8">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl mb-6">Features Collections</h3>
+                </div>
+                <div className="flex space-x-4 overflow-x-auto pb-4">
+                    {collectionList.length > 0 ? (
+                        collectionList.filter(item => item.type === 'features').map((collection) => (
+                            <CollectionCard
+                                key={collection._id}
+                                _id={collection._id}
+                                name={collection.name}
+                                slug={collection.slug}
+                                description={collection.description}
+                                type={collection.type}
+                                publish={collection.publish}
+                                onDelete={handleDeleteCollection}
+                                onUpdate={handleUpdateCollection}
+                            />
+                        ))
+                    ) : (
+                        !isLoading && <div className="text-gray-400">No content available</div>
+                    )}
+                </div>
             </section>
         </div>
     );

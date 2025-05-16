@@ -26,6 +26,18 @@ export const CollectionService = {
         }
     },
 
+    getCollectionListWithoutFeatures: async (): Promise<CollectionListResponse> => {
+        try {
+            const response = await client.get('/collection/all');
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+
     getTotal: async (): Promise<CountResponse> => {
         try {
             const response = await client.get('/collection/total');
@@ -40,9 +52,7 @@ export const CollectionService = {
 
     getHotCollections: async (): Promise<CollectionListResponse> => {
         try {
-            const response = await client.get('/collection/list', {
-                data: { limit: 5 }
-            })
+            const response = await client.get('/collection/list')
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -88,7 +98,34 @@ export const CollectionService = {
         }
     },
 
-    getCollectionContentById: async (collectionId: string): Promise<ContentListResponse> => {
+    getCollectionContentById: async (collectionId: string, limit?: number): Promise<ContentListResponse> => {
+        try {
+            const response = await client.get(`/collection/${collectionId}/contents`, {
+                data: { limit: limit }
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+
+
+    getHeadlineCollection: async (): Promise<CollectionResponse> => {
+        try {
+            const response = await client.get(`/collection/headline`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+
+    getHeadlineCollectionContentById: async (collectionId: string): Promise<ContentListResponse> => {
         try {
             const response = await client.get(`/collection/${collectionId}/contents`);
             return response.data;
@@ -165,8 +202,8 @@ export const CollectionService = {
         try {
             const response = await client.get(`/collection/content/topic`, {
                 data: {
-                    limitContents: 3,
-                    limitCollections: 3
+                    limitContents: 4,
+                    limitCollections: 4
                 }
             });
             return response.data;

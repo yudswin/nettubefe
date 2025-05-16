@@ -73,7 +73,6 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
     };
 
 
-
     const handleNewContent = (newContent: Content) => {
         setContentList(prev => [...prev, newContent])
     }
@@ -228,14 +227,14 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
                             </div>
                             <p className="mb-2 flex gap-2"><span className="font-semibold">Status:</span> {formData.publish ? (
                                 <span className="text-success flex flex-row gap-2">
-                                    <span>Published</span>
+                                    {collection.type === 'features' ? <span>Headliner</span> : <span>Published</span>}
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
                                 </span>
                             ) : (
                                 <span className="text-error flex flex-row gap-2">
-                                    <span>Draft</span>
+                                    {collection.type === 'features' ? <span>Top Movies</span> : <span>Draft</span>}
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
@@ -293,7 +292,7 @@ const CollectionModel = ({ collection, isOpen, onClose, onUpdate, onDelete }: Co
                                     >
                                         <div
                                             className="h-64 rounded-md mb-2 bg-gray-800 relative bg-cover bg-center"
-                                            style={{ backgroundImage: `url(https://media.themoviedb.org/${content.bannerPath})` }}
+                                            style={{ backgroundImage: `url(${content.bannerPath})` }}
                                         >
                                             {content.publish && (
                                                 <div className="absolute top-2 right-2 badge badge-warning">

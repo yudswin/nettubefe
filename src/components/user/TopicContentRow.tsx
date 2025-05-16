@@ -10,7 +10,7 @@ interface TopicContentRowProps {
 
 const TopicContentRow = ({ title, items, className = '', slug }: TopicContentRowProps) => {
     return (
-        <section className="flex md:flex-row flex-col">
+        <section key={slug} className="flex md:flex-row flex-col">
             <div className="flex flex-wrap md:justify-center items-center mb-4 min-w-[16rem] ">
                 <a href={`collection/${slug}`} className="md:w-64 text-center items-center flex flex-col group">
                     <h2 className={`text-2xl font-bold bg-gradient-to-r ${className} bg-clip-text text-transparent`}>{title}</h2>
@@ -26,7 +26,8 @@ const TopicContentRow = ({ title, items, className = '', slug }: TopicContentRow
             <div className="flex space-x-4 overflow-x-auto p-4 scrollbar-hide">
                 {items.map((content, index) => (
                     <TopicContentCard
-                        key={index}
+                        key={content._id?.toString() || content.contentId?.toString() || `content-${index}`}
+                        index={index}
                         content={content}
                         slug={slug}
                     />

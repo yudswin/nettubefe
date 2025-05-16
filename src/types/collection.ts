@@ -3,6 +3,6 @@ export interface Collection {
     name: string,
     slug: string,
     description: string,
-    type: "hot" | "topic",
+    type: "hot" | "topic" | "features",
     publish: boolean
 }

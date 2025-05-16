@@ -144,6 +144,7 @@ const CreateCollectionModal = ({ isOpen, onClose, onCollectionCreated }: CreateC
                             >
                                 <option value="topic">Topic</option>
                                 <option value="hot">Hot</option>
+                                <option value="features">Features</option>
                             </select>
                         </div>
 

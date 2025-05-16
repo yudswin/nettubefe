@@ -30,9 +30,7 @@ const CollectionList = () => {
     const fetchCollections = async () => {
         try {
             setIsLoading(true)
-
-            // Fetch collections
-            const response = await CollectionService.getCollectionList()
+            const response = await CollectionService.getCollectionListWithoutFeatures()
 
             if (response.status === 'success') {
                 // Set collections from the response
@@ -102,6 +100,7 @@ const CollectionList = () => {
                                 {collections.map((collection, index) => (
                                     <div className="">
                                         <CollectionCard
+                                            index={index}
                                             key={collection._id}
                                             name={collection.name}
                                             slug={collection.slug}
