@@ -33,7 +33,7 @@ const MediaCard = ({ content, index, type }: MediaCardProps) => {
         <>
             {type === "hot" && (
                 <div
-                    className="w-66 flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
+                    className="w-62 flex-shrink-0 cursor-pointer transition-transform hover:scale-105"
                     onClick={handleCardClick}
                 >
                     <div
@@ -81,7 +81,7 @@ const MediaCard = ({ content, index, type }: MediaCardProps) => {
 
                     <div className='flex flex-row border-t-2 border-amber-300'>
                         <div className='pr-4 pt-2'>
-                            <span className='text-5xl text-amber-300'>{index + 1}</span>
+                            <span className='text-5xl text-amber-300'>{index ? index + 1 : 1}</span>
                         </div>
                         <div>
                             <div className="pt-2 font-medium text-sm">{content.title}</div>

@@ -16,7 +16,7 @@ import CollectionCard from '@components/user/CollectionCard'
 import { useNavigate } from 'react-router-dom'
 import TopicContentRow from '@components/user/TopicContentRow'
 import HeroHeadline from '@components/user/HeroHeadline'
-import collection from './collection'
+import LazyLoad from '@components/layout/LayzyLoad'
 
 const HomeContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -313,20 +313,22 @@ const HomeContent = () => {
                                 )}
                             </section>
 
-                            {(() => {
-                                let topicCount = 0;
-                                return collectionList
-                                    .filter(item => {
-                                        if (item.type === "topic") {
-                                            topicCount++;
-                                            return topicCount > 3;
-                                        }
-                                        return !(item.type === "features" && item.publish === true);
-                                    })
-                                    .map((collection, index) => (
-                                        <ContentRow key={collection._id} collection={collection} />
-                                    ));
-                            })()}
+                            <LazyLoad>
+                                {(() => {
+                                    let topicCount = 0;
+                                    return collectionList
+                                        .filter(item => {
+                                            if (item.type === "topic") {
+                                                topicCount++;
+                                                return topicCount > 3;
+                                            }
+                                            return !(item.type === "features" && item.publish === true);
+                                        })
+                                        .map((collection, index) => (
+                                            <ContentRow key={collection._id} collection={collection} />
+                                        ));
+                                })()}
+                            </LazyLoad>
                         </>
                     )}
                 </main>

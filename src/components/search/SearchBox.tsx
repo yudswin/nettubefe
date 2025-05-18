@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Content } from '../../types/content';
 import { Person } from '../../types/person';
 import SearchResults from '@components/search/SearchResult';
@@ -16,26 +16,64 @@ const SearchBox = ({
     const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState<Content[]>([]);
     const [personsResult, setPersonsResult] = useState<Person[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
+    
+    // Create ref for the search container
+    const searchContainerRef = useRef<HTMLDivElement>(null);
+
+    // Handle clicks outside of the search container
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+                handleClear();
+            }
+        };
+
+        // Add event listener
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        // Clean up the event listener
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const handleSearch = async () => {
-        const response = await ContentService.searchContent(searchTerm);
-        const personResponse = await PersonService.searchPerson(searchTerm);
+        if (!searchTerm.trim()) return;
+        
+        setIsLoading(true);
+        setHasSearched(true);
+        
+        try {
+            const response = await ContentService.searchContent(searchTerm);
+            const personResponse = await PersonService.searchPerson(searchTerm);
 
-        if (response.status === 'success') {
-            // setResults(response.result.filter(item => item.publish));
-            setResults(response.result);
-        }
+            if (response.status === 'success') {
+                setResults(response.result);
+            } else {
+                setResults([]);
+            }
 
-        if (personResponse.status === 'success') {
-            setPersonsResult(personResponse.result)
+            if (personResponse.status === 'success') {
+                setPersonsResult(personResponse.result);
+            } else {
+                setPersonsResult([]);
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+            setResults([]);
+            setPersonsResult([]);
+        } finally {
+            setIsLoading(false);
         }
     };
-
 
     const handleClear = () => {
         setSearchTerm('');
         setResults([]);
         setPersonsResult([]);
+        setHasSearched(false);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -54,9 +92,12 @@ const SearchBox = ({
         window.location.reload();
     }
 
+    // Determine if we should show results section (loading, results, or no results message)
+    const showResultsSection = isLoading || hasSearched || results.length > 0 || personsResult.length > 0;
+
     return (
         <div className={`hidden md:block flex-1 max-w-xl mx-8 ${className}`}>
-            <div className="relative">
+            <div className="relative" ref={searchContainerRef}>
                 <input
                     type="text"
                     placeholder="Search movies and shows..."
@@ -95,29 +136,37 @@ const SearchBox = ({
                         className="btn btn-ghost btn-circle btn-sm hover:bg-gray-700/50"
                         onClick={handleSearch}
                         aria-label="Search"
+                        disabled={isLoading}
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-gray-400"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                        </svg>
+                        {isLoading ? (
+                            <span className="loading loading-spinner loading-xs text-gray-400"></span>
+                        ) : (
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 text-gray-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                />
+                            </svg>
+                        )}
                     </button>
                 </div>
 
-                {(results.length > 0 || personsResult.length > 0) && (
+                {showResultsSection && (
                     <SearchResults
                         results={results}
                         persons={personsResult}
                         onResultClick={(content, person) => handleNavigate(content, person)}
+                        isLoading={isLoading}
+                        hasSearched={hasSearched}
+                        searchTerm={searchTerm}
                     />
                 )}
             </div>

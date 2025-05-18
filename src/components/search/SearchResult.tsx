@@ -5,9 +5,19 @@ interface SearchResultsProps {
     results?: Content[];
     persons?: Person[];
     onResultClick?: (content?: Content, person?: Person) => void;
+    isLoading?: boolean;
+    hasSearched?: boolean;
+    searchTerm?: string;
 }
 
-const SearchResults = ({ results, persons, onResultClick }: SearchResultsProps) => {
+const SearchResults = ({ 
+    results = [], 
+    persons = [], 
+    onResultClick,
+    isLoading = false,
+    hasSearched = false,
+    searchTerm = ''
+}: SearchResultsProps) => {
     const handleClick = (content: Content) => {
         if (onResultClick) {
             onResultClick(content);
@@ -20,10 +30,26 @@ const SearchResults = ({ results, persons, onResultClick }: SearchResultsProps) 
         }
     }
 
+    // Check if we have any results to show
+    const hasNoResults = hasSearched && !isLoading && results.length === 0 && persons.length === 0;
 
     return (
         <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-140 overflow-y-auto z-50">
-            {results && results.length > 0 && (
+            {isLoading && (
+                <div className="p-6 flex flex-col items-center justify-center">
+                    <div className="loading loading-spinner loading-md text-amber-500"></div>
+                    <p className="mt-2 text-gray-400">Searching...</p>
+                </div>
+            )}
+
+            {hasNoResults && (
+                <div className="p-6 text-center">
+                    <p className="text-gray-400">No results found for "{searchTerm}"</p>
+                    <p className="text-sm text-gray-500 mt-1">Try different keywords or check the spelling</p>
+                </div>
+            )}
+
+            {!isLoading && results.length > 0 && (
                 <>
                     <h2 className='p-2 label'>Movie</h2>
                     {results.map((content) => (
@@ -63,7 +89,8 @@ const SearchResults = ({ results, persons, onResultClick }: SearchResultsProps) 
                     ))}
                 </>
             )}
-            {persons && persons.length > 0 && (
+            
+            {!isLoading && persons.length > 0 && (
                 <>
                     <h2 className='p-2 label'>Person</h2>
                     {persons.map((person) => (
