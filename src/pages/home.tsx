@@ -16,6 +16,7 @@ import CollectionCard from '@components/user/CollectionCard'
 import { useNavigate } from 'react-router-dom'
 import TopicContentRow from '@components/user/TopicContentRow'
 import HeroHeadline from '@components/user/HeroHeadline'
+import collection from './collection'
 
 const HomeContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -242,7 +243,13 @@ const HomeContent = () => {
                     ) : (
                         <>
                             {isHeadlineLoading && <LoadingSpinner />}
-                            <HeroHeadline contentList={headlineContents} collection={headlineCollection} />
+                            {headlineContents.length != 0 ? (
+                                <HeroHeadline contentList={headlineContents} collection={headlineCollection} />
+                            ) : (
+                                <div className="p-8 text-gray-400 text-center">
+                                    No headline contents available
+                                </div>
+                            )}
 
                             <section className={`mb-8 ${collectionList.length == 0 ? "hidden" : ""}`}>
                                 {isLoading && <LoadingSpinner />}
@@ -306,9 +313,20 @@ const HomeContent = () => {
                                 )}
                             </section>
 
-                            <ContentRow title={t.continueWatching} items={continueWatching} type="continue" />
-                            <ContentRow title={t.recentlyAdded} items={recentlyAdded} type="recent" />
-
+                            {(() => {
+                                let topicCount = 0;
+                                return collectionList
+                                    .filter(item => {
+                                        if (item.type === "topic") {
+                                            topicCount++;
+                                            return topicCount > 3;
+                                        }
+                                        return !(item.type === "features" && item.publish === true);
+                                    })
+                                    .map((collection, index) => (
+                                        <ContentRow key={collection._id} collection={collection} />
+                                    ));
+                            })()}
                         </>
                     )}
                 </main>

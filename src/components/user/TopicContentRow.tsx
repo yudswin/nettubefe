@@ -24,7 +24,7 @@ const TopicContentRow = ({ title, items, className = '', slug }: TopicContentRow
             </div>
 
             <div className="flex space-x-4 overflow-x-auto p-4 scrollbar-hide">
-                {items.map((content, index) => (
+                {items.slice(0,5).map((content, index) => (
                     <TopicContentCard
                         key={content._id?.toString() || content.contentId?.toString() || `content-${index}`}
                         index={index}

@@ -8,9 +8,9 @@ interface HeroHeadlineProps {
     contentList: Content[],
 }
 
-const HeroHeadline = ({ collection, contentList }: HeroHeadlineProps) => {
+const HeroHeadline = ({ contentList }: HeroHeadlineProps) => {
     const [activeItem, setActiveItem] = useState(1);
-    const [autoPlay, setAutoPlay] = useState(true);
+    const [autoPlay] = useState(true);
     const navigate = useNavigate()
     const autoPlayInterval = 5000;
     const totalItems = 4;
@@ -36,7 +36,6 @@ const HeroHeadline = ({ collection, contentList }: HeroHeadlineProps) => {
             <div className="carousel w-full">
                 {contentList.map((content, index) => (<>
                     <div key={index} className={`carousel-item w-full ${activeItem === (index + 1) ? 'block' : 'hidden'}`}>
-                        {/* <div className='w-full absolute h-full bg-radial/longer from-gray-800/50 to-gray-900/50' /> */}
                         <div
                             style={{ backgroundImage: `url(${content.bannerPath})` }}
                             className="w-full rounded-lg h-48 md:h-162 bg-cover bg-center relative" >
@@ -49,7 +48,7 @@ const HeroHeadline = ({ collection, contentList }: HeroHeadlineProps) => {
                 {contentList.map((content, index) => (<>
                     <button onClick={() => handleManualNavigation(index + 1)} className={`mx-2 ${activeItem === (index + 1) ? '' : ''}`}>
                         <div
-                            className={`bg-cover bg-center rounded-md mb-2 bg-gray-800 transition-all ${activeItem === (index + 1) ? 'h-64 w-44' : 'h-32 w-22 '}`}
+                            className={`bg-cover bg-center rounded-md mb-2 bg-gray-800 transition-all ${activeItem === (index + 1) ? 'h-64 w-44 border border-white shadow-2xl' : 'h-32 w-22 '}`}
                             style={{ backgroundImage: `url(${content.bannerPath})` }} >
                         </div>
                     </button >

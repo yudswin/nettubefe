@@ -18,8 +18,6 @@ export const Sidebar = ({
     toggleSidebar,
     activeTab,
     onTabChange,
-    onSelectLibrary,
-    selectedLibrary
 }: SidebarProps) => {
     const [isAuth, setIsAuth] = useState(false)
     const [modalOpen, setModalOpen] = useState(false);
@@ -27,12 +25,6 @@ export const Sidebar = ({
     const { t } = useLanguage();
 
 
-    // const libraries = [
-    //     { id: 1, name: t.movies, icon: '🎬' },
-    //     { id: 2, name: t.tvShows, icon: '📺' },
-    //     { id: 3, name: t.music, icon: '🎵' },
-    //     { id: 4, name: t.photos, icon: '📷' },
-    // ];
 
     useEffect(() => {
         setIsAuth(isAuthenticated || !!user)
@@ -81,25 +73,6 @@ export const Sidebar = ({
                                         <span>{t.home}</span>
                                     </button>
                                 </li>
-
-                                {/* Libraries Section
-                            {libraries.map(library => (
-                                <li key={library.id} className="mb-1">
-                                    <button
-                                        onClick={() => {
-                                            onTabChange('library');
-                                            onSelectLibrary(library.id);
-                                        }}
-                                        className={`w-full text-left flex items-center px-4 py-3 rounded-md ${selectedLibrary === library.id && activeTab === 'library'
-                                            ? 'bg-gray-800 border-l-4 border-amber-500'
-                                            : 'hover:bg-gray-800'
-                                            }`}
-                                    >
-                                        <span className="mr-3">{library.icon}</span>
-                                        <span>{library.name}</span>
-                                    </button>
-                                </li>
-                            ))} */}
 
                                 {/* Admin Tab */}
                                 {user?.roles === 'admin' && (

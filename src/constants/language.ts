@@ -69,6 +69,17 @@ export interface LanguageContent {
     // Tabs
     tabAdmin: string;
     tabSetting: string;
+
+    genres: string;
+    country: string;
+    releaseDate: string;
+    director: string;
+    overview: string;
+    noOverviewAvailable: string
+
+    unknownTitle: string
+    notAvailable: string
+    noCastAvailable: string
 }
 
 export const EN: LanguageContent = {
@@ -136,10 +147,22 @@ export const EN: LanguageContent = {
     passwordMismatch: 'Password is Wrong ',
     registrationSuccess: 'Register Success',
     registrationFailed: 'Register Falied ',
-    
+
     // Tabs
     tabAdmin: 'Admin',
     tabSetting: 'Setting',
+
+    genres: 'Genres',
+    country: 'Country',
+    releaseDate: 'Release Date',
+    director: 'Director',
+    overview: 'Overview',
+    noOverviewAvailable: 'No overview available',
+
+    unknownTitle: 'Unknown Title',
+    notAvailable: 'Not Available',
+    noCastAvailable: 'No cast information available'
+
 };
 
 export const VI: LanguageContent = {
@@ -199,7 +222,7 @@ export const VI: LanguageContent = {
     signUp_email: 'Hãy nhập địa chỉ email',
     signUp_password: 'Mật khẩu',
     signUp_repassword: 'Nhập lại Mật khẩu',
-    
+
     // Error
     genericError: 'Đã xảy ra lỗi ở server ',
     networkError: 'Đã xảy ra lỗi kết nối ',
@@ -211,6 +234,17 @@ export const VI: LanguageContent = {
     // Tabs
     tabAdmin: 'Admin',
     tabSetting: 'Cài đặt',
+
+    genres: 'Thể loại',
+    country: 'Quốc gia',
+    releaseDate: 'Ngày phát hành',
+    director: 'Đạo diễn',
+    overview: 'Tóm tắt',
+    noOverviewAvailable: 'Không có tóm tắt',
+
+    unknownTitle: 'Tiêu đề không xác định',
+    notAvailable: 'Không có sẵn',
+    noCastAvailable: 'Không có thông tin diễn viên'
 };
 
 export const LANGUAGES = {
