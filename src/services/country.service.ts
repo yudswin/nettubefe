@@ -62,4 +62,34 @@ export const CountryService = {
             throw new Error('Unknown error occurred');
         }
     },
+    addCountryToContent: async (
+        contentId: string,
+        countryIds: string[]
+    ): Promise<CountryResponse> => {
+        try {
+            const response = await client.post(`/content/${contentId}/countries`, { countryIds });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+    removeCountryFromContent: async (
+        contentId: string,
+        countryIds: string[]
+    ): Promise<CountryResponse> => {
+        try {
+            const response = await client.delete(`/content/${contentId}/countries`, {
+                data: { countryIds }
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    }
 }

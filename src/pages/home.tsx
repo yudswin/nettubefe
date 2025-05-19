@@ -90,19 +90,6 @@ const HomeContent = () => {
         setSidebarOpen(!sidebarOpen);
     }
 
-    useEffect(() => {
-        if (collectionList && collectionList.length > 0) {
-            console.log('collectionList', collectionList)
-        }
-    }, [collectionList])
-
-    useEffect(() => {
-        if (collectionTopicList && collectionTopicList.length > 0) {
-            console.log('collectionTopicList', collectionTopicList)
-        }
-    }, [collectionTopicList])
-
-
     const fetchCollection = async () => {
         try {
             setIsLoading(true);

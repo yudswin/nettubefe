@@ -15,6 +15,12 @@ import AddCastModal from "@components/create/AddCastModal";
 import { DirectorService } from "@services/director.service";
 import AddDirectorModal from "@components/create/AddDirectorModal";
 import UpdateCastModal from "@components/create/UpdateCastModal";
+import { Country } from "../../types/country";
+import { Genre } from "../../types/genre";
+import { CountryService } from "@services/country.service";
+import AddCountryModal from "@components/create/AddCountryModal";
+import { GenreService } from "@services/genre.service";
+import AddGenreModal from "@components/create/AddGenreModal";
 
 export interface ContentDetailModalProps {
     content: Content
@@ -46,12 +52,22 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
 
     const [isDirectorsLoading, setIsDirectorsLoading] = useState(false);
     const [directorList, setDirectorList] = useState<Director[]>([])
-    const [showDirectorConfirm, setShowDirectorConfirm] = useState(false);    const [directorToDelete, setDirectorToDelete] = useState<Director>();
+    const [showDirectorConfirm, setShowDirectorConfirm] = useState(false); const [directorToDelete, setDirectorToDelete] = useState<Director>();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [selectedCast, setSelectedCast] = useState<Cast | null>(null);
 
+    const [isCountriesLoading, setIsCountriesLoading] = useState(false);
+    const [countryList, setCountryList] = useState<Country[]>([]);
+    const [showCountryConfirm, setShowCountryConfirm] = useState(false);
+    const [countryToDelete, setCountryToDelete] = useState<Country>();
+    const [showAddCountryModal, setShowAddCountryModal] = useState(false);
 
+    const [isGenresLoading, setIsGenresLoading] = useState(false);
+    const [genreList, setGenreList] = useState<Genre[]>([]);
+    const [showGenreConfirm, setShowGenreConfirm] = useState(false);
+    const [genreToDelete, setGenreToDelete] = useState<Genre>();
+    const [showAddGenreModal, setShowAddGenreModal] = useState(false);
 
     const handleNewCast = (newCast: Cast) => {
         setCastList(prev => [...prev, newCast])
@@ -129,6 +145,54 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         }
     }
 
+    const fetchCountries = async () => {
+        try {
+            setIsCountriesLoading(true);
+            const response = await CountryService.getCountriesByContent(content._id);
+            if (response.status === 'success') {
+                setCountryList(response.result);
+            } else {
+                setToast({
+                    show: true,
+                    message: response.msg || 'Failed to load countries',
+                    type: 'error'
+                });
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsCountriesLoading(false);
+        }
+    };
+
+    const fetchGenres = async () => {
+        try {
+            setIsGenresLoading(true);
+            const response = await GenreService.getGenresByContent(content._id);
+            if (response.status === 'success') {
+                setGenreList(response.result);
+            } else {
+                setToast({
+                    show: true,
+                    message: response.msg || 'Failed to load genres',
+                    type: 'error'
+                });
+            }
+        } catch (error) {
+            setToast({
+                show: true,
+                message: 'Failed to connect to server',
+                type: 'error'
+            });
+        } finally {
+            setIsGenresLoading(false);
+        }
+    };
+
     useEffect(() => {
         const dialog = dialogRef.current;
         if (!dialog) return;
@@ -168,12 +232,68 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         }
     };
 
+    const handleNewCountry = (newCountry: Country) => {
+        setCountryList(prev => [...prev, newCountry]);
+    };
+
+    const handleCountryDelete = async (countryId?: string) => {
+        setShowCountryConfirm(false);
+        try {
+            setIsCountriesLoading(true);
+            if (countryId) {
+                const response = await CountryService.removeCountryFromContent(formData._id, [countryId]);
+                if (response.status === 'success') {
+                    setToast({ show: true, message: 'Country removed successfully', type: 'success' });
+                    setCountryList(prev => prev.filter(
+                        country => country._id !== countryId
+                    ));
+                    setCountryToDelete(undefined);
+                } else {
+                    setToast({ show: true, message: response.msg || 'Failed to remove country', type: 'error' });
+                }
+            }
+        } catch (error) {
+            setToast({ show: true, message: 'An error occurred while removing country', type: 'error' });
+        } finally {
+            setIsCountriesLoading(false);
+        }
+    };
+
+    const handleNewGenre = (newGenre: Genre) => {
+        setGenreList(prev => [...prev, newGenre]);
+    };
+
+    const handleGenreDelete = async (genreId?: string) => {
+        setShowGenreConfirm(false);
+        try {
+            setIsGenresLoading(true);
+            if (genreId) {
+                const response = await GenreService.removeGenreFromContent(formData._id, [genreId]);
+                if (response.status === 'success') {
+                    setToast({ show: true, message: 'Genre removed successfully', type: 'success' });
+                    setGenreList(prev => prev.filter(
+                        genre => genre._id !== genreId
+                    ));
+                    setGenreToDelete(undefined);
+                } else {
+                    setToast({ show: true, message: response.msg || 'Failed to remove genre', type: 'error' });
+                }
+            }
+        } catch (error) {
+            setToast({ show: true, message: 'An error occurred while removing genre', type: 'error' });
+        } finally {
+            setIsGenresLoading(false);
+        }
+    };
+
 
     useEffect(() => {
         if (isOpen == true) {
             fetchMedia();
             fetchCast();
             fetchDirector();
+            fetchCountries();
+            fetchGenres();
         }
     }, [isOpen]);
 
@@ -291,19 +411,17 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
         } finally {
             setIsDirectorsLoading(false);
         }
-    };    const handleNewDirector = (newDirector: Director) => {
+    }; const handleNewDirector = (newDirector: Director) => {
         setDirectorList(prev => [...prev, newDirector])
     }
 
     const handleUpdateCast = (updatedCast: Cast) => {
-        setCastList(prev => prev.map(cast => 
-            cast.personId === updatedCast.personId 
-                ? { ...cast, character: updatedCast.character } 
+        setCastList(prev => prev.map(cast =>
+            cast.personId === updatedCast.personId
+                ? { ...cast, character: updatedCast.character }
                 : cast
         ));
     }
-
-    const imageUrl = `https://media.themoviedb.org/${content.bannerPath}`
 
     if (!isOpen) return null; // Model state
 
@@ -326,7 +444,7 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                         <div
                             className="h-64 bg-cover bg-center"
                             style={{
-                                backgroundImage: `url(${imageUrl})`,
+                                backgroundImage: `url(${content.bannerPath})`,
                             }}
                         >
                         </div>
@@ -628,13 +746,138 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                             </div>
                         )}
 
+                        <div className="mt-2 border-t h-2 w-full border-amber-500"></div>
+                        <div className="flex flex-wrap gap-2 mt-4">
+                            <h2 className="font-bold">Countries:</h2>
+                            {isCountriesLoading && <LoadingSpinner />}
+                            {countryList.map((country) => (
+                                <div
+                                    key={country._id}
+                                    className="badge badge-outline badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer group"
+                                    onClick={() => {
+                                        setShowCountryConfirm(true);
+                                        setCountryToDelete(country);
+                                    }}
+                                >
+                                    <span className="relative inline-block">
+                                        <span className="group-hover:opacity-0 transition-opacity">
+                                            {country.name}
+                                        </span>
+                                        <span className="absolute left-0 top-0 w-full text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            Remove
+                                        </span>
+                                    </span>
+                                </div>
+                            ))}
+                            <div
+                                className="badge badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer"
+                                onClick={() => setShowAddCountryModal(true)}
+                            >
+                                + New Country
+                            </div>
+                            <AddCountryModal
+                                isOpen={showAddCountryModal}
+                                onClose={() => setShowAddCountryModal(false)}
+                                onCountryAdded={handleNewCountry}
+                                contentId={content._id}
+                            />
+                        </div>
+
+                        {showCountryConfirm && (
+                            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                                <div className="bg-gray-900 rounded-lg p-6 max-w-sm w-full">
+                                    <h3 className="text-lg font-bold mb-4">Confirm Delete</h3>
+                                    <p className="text-gray-300 mb-6">Delete {countryToDelete?.name}?</p>
+                                    <div className="flex justify-end gap-4">
+                                        <button
+                                            onClick={() => {
+                                                setShowCountryConfirm(false);
+                                                setCountryToDelete(undefined);
+                                            }}
+                                            className="btn btn-ghost"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            className="btn btn-error"
+                                            onClick={() => handleCountryDelete(countryToDelete?._id)}
+                                        >
+                                            Confirm
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex flex-wrap gap-2 mt-4">
+                            <h2 className="font-bold">Genres:</h2>
+                            {isGenresLoading && <LoadingSpinner />}
+                            {genreList.map((genre) => (
+                                <div
+                                    key={genre._id}
+                                    className="badge badge-outline badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer group"
+                                    onClick={() => {
+                                        setShowGenreConfirm(true);
+                                        setGenreToDelete(genre);
+                                    }}
+                                >
+                                    <span className="relative inline-block">
+                                        <span className="group-hover:opacity-0 transition-opacity">
+                                            {genre.name}
+                                        </span>
+                                        <span className="absolute left-0 top-0 w-full text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            Remove
+                                        </span>
+                                    </span>
+                                </div>
+                            ))}
+                            <div
+                                className="badge badge-primary gap-1 hover:bg-primary hover:text-primary-content transition-colors cursor-pointer"
+                                onClick={() => setShowAddGenreModal(true)}
+                            >
+                                + New Genre
+                            </div>
+                            <AddGenreModal
+                                isOpen={showAddGenreModal}
+                                onClose={() => setShowAddGenreModal(false)}
+                                onGenreAdded={handleNewGenre}
+                                contentId={content._id}
+                            />
+                        </div>
+
+                        {showGenreConfirm && (
+                            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+                                <div className="bg-gray-900 rounded-lg p-6 max-w-sm w-full">
+                                    <h3 className="text-lg font-bold mb-4">Confirm Delete</h3>
+                                    <p className="text-gray-300 mb-6">Delete {genreToDelete?.name}?</p>
+                                    <div className="flex justify-end gap-4">
+                                        <button
+                                            onClick={() => {
+                                                setShowGenreConfirm(false);
+                                                setGenreToDelete(undefined);
+                                            }}
+                                            className="btn btn-ghost"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            className="btn btn-error"
+                                            onClick={() => handleGenreDelete(genreToDelete?._id)}
+                                        >
+                                            Confirm
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="pt-4">
                             <div className="border-t h-2 w-full border-amber-500"></div>
                             <div className="flex flex-row justify-between">
                                 <h3 className="text-xl mb-4">Casts</h3>
                                 <AddCastModal contentId={formData._id} onSuccess={handleNewCast} />
                             </div>
-                            <div className="carousel carousel-center space-x-4 pb-2">                                
+                            <div className="carousel carousel-center space-x-4 pb-2">
                                 {castList.map(cast => (
                                     <div key={cast.personId} className="carousel-item w-24 hover:cursor-pointer"
                                         onClick={() => {
@@ -647,7 +890,9 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                                 className="avatar mb-2 group"
                                             >
                                                 <div className="w-24 h-24 rounded-full">
-                                                    <img src={cast.profilePath} alt={cast.character} />
+                                                    <img src={cast.profilePath
+                                                        ? `https://media.themoviedb.org/${cast.profilePath}`
+                                                        : "/defaultProfile.jpg"} alt={cast.character} />
                                                 </div>
                                                 <div className="absolute rounded-full hover:bg-amber-200/50 w-24 h-24 group">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-8 opacity-0 absolute group-hover:opacity-100 transition-opacity top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
@@ -682,7 +927,8 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                                 <UploadModal contentId={formData._id} onSuccess={() => fetchMedia()} />
                             </div>
                             <div className="flex-col gap-4 flex ">
-                                {isMediaLoading && <LoadingSpinner />}                                {mediaList.map((media) => (
+                                {isMediaLoading && <LoadingSpinner />}
+                                {mediaList.map((media) => (
                                     <MediaCardAdmin
                                         key={media._id}
                                         media={media}
@@ -713,7 +959,6 @@ const ContentModel = ({ content, isOpen, onClose, onUpdate, onDelete }: ContentD
                 )}
 
                 {isLoading && <FullPageLoader />}
-
 
             </div>
         </dialog >

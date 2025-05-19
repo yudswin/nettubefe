@@ -62,4 +62,34 @@ export const GenreService = {
             throw new Error('Unknown error occurred');
         }
     },
+    addGenreToContent: async (
+        contentId: string,
+        genreIds: string[]
+    ): Promise<GenreResponse> => {
+        try {
+            const response = await client.post(`/content/${contentId}/genres`, { genreIds });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    },
+    removeGenreFromContent: async (
+        contentId: string,
+        genreIds: string[]
+    ): Promise<GenreResponse> => {
+        try {
+            const response = await client.delete(`/content/${contentId}/genres`, {
+                data: { genreIds }
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) return error.response.data as ErrorResponse;
+            }
+            throw new Error('Unknown error occurred');
+        }
+    }
 }
