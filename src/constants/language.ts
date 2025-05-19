@@ -80,6 +80,8 @@ export interface LanguageContent {
     unknownTitle: string
     notAvailable: string
     noCastAvailable: string
+
+    browse: string
 }
 
 export const EN: LanguageContent = {
@@ -161,8 +163,9 @@ export const EN: LanguageContent = {
 
     unknownTitle: 'Unknown Title',
     notAvailable: 'Not Available',
-    noCastAvailable: 'No cast information available'
+    noCastAvailable: 'No cast information available',
 
+    browse: 'Browse'
 };
 
 export const VI: LanguageContent = {
@@ -244,7 +247,9 @@ export const VI: LanguageContent = {
 
     unknownTitle: 'Tiêu đề không xác định',
     notAvailable: 'Không có sẵn',
-    noCastAvailable: 'Không có thông tin diễn viên'
+    noCastAvailable: 'Không có thông tin diễn viên',
+
+    browse: 'Duyệt Tìm'
 };
 
 export const LANGUAGES = {

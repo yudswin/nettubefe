@@ -20,9 +20,9 @@ import LazyLoad from '@components/layout/LayzyLoad'
 
 const HomeContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState<'home' | 'library' | 'admin' | 'settings'>('home');
+    const [activeTab, setActiveTab] = useState<'home' | 'browse' | 'admin' | 'settings'>('home');
     const [selectedLibrary, setSelectedLibrary] = useState<number | null>(null);
-    const [isAdmin] = useState(true); // Replace with real auth check
+    const [isAdmin] = useState(true);
     const { t } = useLanguage();
     const navigate = useNavigate();
 
@@ -70,21 +70,6 @@ const HomeContent = () => {
         'from-red-400 to-white',
         'from-orange-400 to-white',
     ];
-
-    // Mock data for demonstration
-    const continueWatching = [
-        { id: 1, title: 'Movie 1', image: '/placeholder.jpg', progress: 45 },
-        { id: 2, title: 'TV Show 1', image: '/placeholder.jpg', progress: 60 },
-        { id: 3, title: 'Movie 2', image: '/placeholder.jpg', progress: 20 },
-        { id: 4, title: 'TV Show 2', image: '/placeholder.jpg', progress: 80 },
-    ]
-
-    const recentlyAdded = [
-        { id: 5, title: 'New Movie 1', image: '/placeholder.jpg', added: '2 days ago' },
-        { id: 6, title: 'New TV Show 1', image: '/placeholder.jpg', added: '1 day ago' },
-        { id: 7, title: 'New Movie 2', image: '/placeholder.jpg', added: '5 hours ago' },
-        { id: 8, title: 'New TV Show 2', image: '/placeholder.jpg', added: 'Just now' },
-    ]
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
@@ -225,8 +210,6 @@ const HomeContent = () => {
                         <SettingContent />
                     ) : activeTab === 'admin' ? (
                         <AdminContent />
-                    ) : activeTab === 'library' ? (
-                        <LibraryContent libraryId={selectedLibrary} />
                     ) : (
                         <>
                             {isHeadlineLoading && <LoadingSpinner />}
@@ -311,7 +294,7 @@ const HomeContent = () => {
                                             }
                                             return !(item.type === "features" && item.publish === true);
                                         })
-                                        .map((collection, index) => (
+                                        .map((collection) => (
                                             <ContentRow key={collection._id} collection={collection} />
                                         ));
                                 })()}

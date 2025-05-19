@@ -261,9 +261,15 @@ const movie = () => {
                                         <div className='flex flex-wrap gap-2 mb-2'>
                                             <span className='font-bold'>Country: </span>
                                             {countryList.map((country) => (
-                                                <span key={country._id} className="opacity-100">
-                                                    {country.name} ({country.code})
-                                                </span>
+                                                <div
+                                                    key={country._id}
+                                                    className="badge bg-blue-500/50 border-0 hover:bg-primary hover:text-primary-content transition-colors hover:cursor-pointer"
+                                                    onClick={() => navigate(`/browse?countrySlugs=${country.slug}`)}
+                                                >
+                                                    <span className="opacity-100">
+                                                        {country.name} ({country.code})
+                                                    </span>
+                                                </div>
                                             ))}
                                         </div>
                                         {content.releaseDate && (
@@ -278,7 +284,9 @@ const movie = () => {
                                             {genreList.map((genre) => (
                                                 <div
                                                     key={genre._id}
-                                                    className="badge bg-amber-500/50 border-0 hover:bg-primary hover:text-primary-content transition-colors">
+                                                    className="badge bg-amber-500/50 border-0 hover:bg-primary hover:text-primary-content transition-colors hover:cursor-pointer"
+                                                    onClick={() => navigate(`/browse?genreSlugs=${genre.slug}`)}
+                                                >
                                                     <span className="opacity-100">
                                                         {genre.englishName}
                                                     </span>

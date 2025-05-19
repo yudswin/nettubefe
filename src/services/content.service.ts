@@ -9,6 +9,28 @@ import { Director } from '../types/director';
 export type ContentListResponse = SuccessResponse<Content[]> | ErrorResponse;
 export type ContentResponse = SuccessResponse<Content> | ErrorResponse;
 
+export interface BrowseContent {
+    results: Content[];
+    pagination: {
+        page: number,
+        limit: number,
+        totalItems: number,
+        totalPages: number
+    }
+}
+
+export interface BrowseParams {
+    years?: string;
+    type?: string;
+    status?: string;
+    genreSlugs?: string;
+    countrySlugs?: string;
+    page?: number;
+    limit?: number;
+}
+
+export type BrowseResponse = SuccessResponse<BrowseContent> | ErrorResponse;
+
 
 export const ContentService = {
     getContentList: async (): Promise<ContentListResponse> => {
@@ -78,7 +100,7 @@ export const ContentService = {
             }
             throw new Error('Unknown error occurred');
         }
-    },    
+    },
     getContentByPerson: async (personId: string): Promise<ContentListResponse> => {
         try {
             const [castResponse, directorResponse] = await Promise.all([
@@ -101,15 +123,15 @@ export const ContentService = {
                 };
             }
 
-            const contentPromises = uniqueContentIds.map(contentId => 
+            const contentPromises = uniqueContentIds.map(contentId =>
                 client.get<SuccessResponse<Content> | ErrorResponse>(`/content/${contentId}`)
             );
             const contentResponses = await Promise.all(contentPromises);
-            const failedResponse = contentResponses.find(response => 
+            const failedResponse = contentResponses.find(response =>
                 response.data.status === 'failed'
             );
             if (failedResponse) return failedResponse.data as ErrorResponse;
-            const contents = contentResponses.map(response => 
+            const contents = contentResponses.map(response =>
                 (response.data as SuccessResponse<Content>).result
             );
 
@@ -129,4 +151,19 @@ export const ContentService = {
             };
         }
     },
+    getBrowseContent: async (params: BrowseParams): Promise<BrowseResponse> => {
+        try {
+            const response = await client.get('/content/v1/browse', { params });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response.data as ErrorResponse;
+            }
+            return {
+                status: 'failed',
+                msg: 'Unknown error occurred',
+                error: 'Internal server error'
+            };
+        }
+    }
 };

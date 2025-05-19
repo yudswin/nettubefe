@@ -32,7 +32,6 @@ const SettingContent = () => {
             message: '',
             type: 'success'
         })
-        console.log(user)
     }, [])
 
     const fetchUserLastestInfo = async () => {

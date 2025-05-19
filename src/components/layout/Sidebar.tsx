@@ -3,11 +3,12 @@ import SignOutButton from '@components/ui/SignOutButton';
 import { useAuth } from '@contexts/AuthContext';
 import { useLanguage } from '@contexts/LanguageContext';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 interface SidebarProps {
     isOpen: boolean;
     toggleSidebar: () => void;
-    activeTab: 'home' | 'library' | 'admin' | 'settings';
-    onTabChange: (tab: 'home' | 'library' | 'admin' | 'settings') => void;
+    activeTab: 'home' | 'browse' | 'admin' | 'settings';
+    onTabChange: (tab: 'home' | 'browse' | 'admin' | 'settings') => void;
     onSelectLibrary: (id: number) => void; // New prop for library selection
     selectedLibrary: number | null; // New prop to track selected library
     isAdmin?: boolean; // Admin state
@@ -23,8 +24,7 @@ export const Sidebar = ({
     const [modalOpen, setModalOpen] = useState(false);
     const { user, isAuthenticated } = useAuth();
     const { t } = useLanguage();
-
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         setIsAuth(isAuthenticated || !!user)
@@ -89,6 +89,20 @@ export const Sidebar = ({
                                         </button>
                                     </li>
                                 )}
+
+                                {/* Browse Tab */}
+                                <li className="mb-1">
+                                    <button
+                                        onClick={() => navigate('/browse')}
+                                        className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'browse'
+                                            ? 'bg-gray-800 border-l-4 border-amber-500'
+                                            : 'hover:bg-gray-800'
+                                            }`}
+                                    >
+                                        <span className="mr-3">🔍</span>
+                                        <span>{t.browse}</span>
+                                    </button>
+                                </li>
 
                                 {/* Settings Tab */}
                                 <li className={`mt-6 mb-1 ${user ? '' : 'hidden'}`}>

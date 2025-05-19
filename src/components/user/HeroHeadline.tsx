@@ -34,29 +34,29 @@ const HeroHeadline = ({ contentList }: HeroHeadlineProps) => {
     return (
         <section className='mb-8 rounded-lg h-48 md:h-162 flex items-center px-6 md:px-8 relative'>
             <div className="carousel w-full">
-                {contentList.map((content, index) => (<>
-                    <div key={index} className={`carousel-item w-full ${activeItem === (index + 1) ? 'block' : 'hidden'}`}>
+                {contentList.map((content, index) => (
+                    <div key={content._id || index} className={`carousel-item w-full ${activeItem === (index + 1) ? 'block' : 'hidden'}`}>
                         <div
                             style={{ backgroundImage: `url(${content.bannerPath})` }}
                             className="w-full rounded-lg h-48 md:h-162 bg-cover bg-center relative" >
                             <div className='w-full h-full absolute bg-radial/longer from-gray-800/50 to-gray-900/50 rounded-lg'></div>
                         </div>
                     </div>
-                </>))}
+                ))}
             </div>
             <div className="absolute xl:flex hidden bottom-6 right-10 items-end gap-2 py-2 hover:cursor-pointer">
-                {contentList.map((content, index) => (<>
-                    <button onClick={() => handleManualNavigation(index + 1)} className={`mx-2 ${activeItem === (index + 1) ? '' : ''}`}>
+                {contentList.map((content, index) => (
+                    <button key={content._id || index} onClick={() => handleManualNavigation(index + 1)} className={`mx-2 ${activeItem === (index + 1) ? '' : ''}`}>
                         <div
                             className={`bg-cover bg-center rounded-md mb-2 bg-gray-800 transition-all ${activeItem === (index + 1) ? 'h-64 w-44 border border-white shadow-2xl' : 'h-32 w-22 '}`}
                             style={{ backgroundImage: `url(${content.bannerPath})` }} >
                         </div>
-                    </button >
-                </>))}
+                    </button>
+                ))}
             </div>
             <div className="absolute bottom-6 left-10 justify-center gap-2 py-2 ">
                 {contentList.map((content, index) => (
-                    <>
+                    <div key={content._id || index} className="contents">
                         <div className={`lg:ml-8 transition-all ${activeItem === (index + 1) ? 'md:animate-[bounce_5s_ease-in-out] scale-100 md:scale-105' : 'hidden'}`}>
                             <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold mb-2 md:mb-4 line-clamp-2 md:line-clamp-none">
                                 {content.title}
@@ -126,7 +126,7 @@ const HeroHeadline = ({ contentList }: HeroHeadlineProps) => {
                             </div>
                             <div className='group-hover:cursor-pointer font-black text-amber-200'>Watch Now</div>
                         </button>
-                    </>
+                    </div>
                 ))}
             </div>
         </section >

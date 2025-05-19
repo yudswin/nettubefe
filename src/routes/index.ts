@@ -5,6 +5,7 @@ import movie from "@pages/movie";
 import person from "@pages/person";
 import collection from "@pages/collection";
 import collectionList from "@pages/collectionList";
+import browse from "@pages/browse";
 
 
 export interface RouteType {
@@ -40,6 +41,10 @@ const routes: RouteType[] = [
     {
         path: '/collection',
         page: collectionList,
+    },
+    {
+        path: '/browse',
+        page: browse
     }
 ]
 
