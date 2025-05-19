@@ -1,9 +1,7 @@
 import LanguageSwitcher from '../ui/LanguageSwitcher'
 import { useLanguage } from '../../contexts/LanguageContext'
 import { useEffect, useState } from 'react';
-import AuthModel from '../ui/AuthModel';
 import { useAuth } from '@contexts/AuthContext';
-import SignOutButton from '@components/ui/SignOutButton';
 import SearchBox from '@components/search/SearchBox';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,27 +12,14 @@ interface HeaderProps {
 
 const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
     const { t } = useLanguage();
-    const [modalOpen, setModalOpen] = useState(false);
-    const [isAuth, setIsAuth] = useState(false)
+    const [, setIsAuth] = useState(false)
     const { user, isAuthenticated } = useAuth();
-
-    const handleCardClick = () => {
-        setModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setModalOpen(false);
-    };
 
     const navigate = useNavigate()
 
     useEffect(() => {
         setIsAuth(isAuthenticated || !!user)
     }, [isAuthenticated, user])
-
-    const imageUrl = user?.imgs
-        ? user.imgs.path
-        : "/defaultProfile.jpg";
 
 
     return (
