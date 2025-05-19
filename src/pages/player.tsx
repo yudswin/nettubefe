@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Hls from 'hls.js';
 import { StreamingService } from "../services/streaming.service";
 import { useLanguage } from "@contexts/LanguageContext";
+import { useAuth } from "@contexts/AuthContext";
+import { HistoryService } from "@services/history.service";
 
 const Player = () => {
     const { mediaId } = useParams<{ mediaId: string }>();
@@ -10,8 +12,11 @@ const Player = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const videoRef = useRef<HTMLVideoElement>(null);
-    const { t } = useLanguage()
-    const navigate = useNavigate()
+    const { t } = useLanguage();
+    const navigate = useNavigate();
+    const { user } = useAuth();
+    const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const [initialProgressSet, setInitialProgressSet] = useState(false);
 
 
     useEffect(() => {
@@ -55,6 +60,103 @@ const Player = () => {
             }
         }
     }, [hlsUrl]);
+
+    useEffect(() => {
+        if (!user || !mediaId || !videoRef.current || !hlsUrl) return;
+
+        const videoElement = videoRef.current;
+
+        // Check for existing history and set initial progress
+        const initializeHistory = async () => {
+            try {
+                const response = await HistoryService.getHistoryEntry(user._id, mediaId);
+
+                // If history exists and has progress, seek to that position
+                if (response.status === 'success' && response.result.progress) {
+                    // Wait until video metadata is loaded before setting time
+                    const handleMetadata = () => {
+                        if (videoElement.duration && !initialProgressSet) {
+                            const timeToSeek = ((response.result.progress ?? 0) / 100) * videoElement.duration;
+                            videoElement.currentTime = timeToSeek;
+                            setInitialProgressSet(true);
+                        }
+                    };
+
+                    if (videoElement.duration) {
+                        handleMetadata();
+                    } else {
+                        videoElement.addEventListener('loadedmetadata', handleMetadata);
+                        return () => videoElement.removeEventListener('loadedmetadata', handleMetadata);
+                    }
+                } else {
+                    const handlePlay = async () => {
+                        try {
+                            await HistoryService.createHistory({
+                                userId: user._id,
+                                mediaId: mediaId,
+                                progress: 0,
+                                completed: false,
+                                content: {} as any,
+                                media: {} as any
+                            });
+                        } catch (error) {
+                            console.error("Failed to create history entry:", error);
+                        }
+                    };
+
+                    videoElement.addEventListener('play', handlePlay, { once: true });
+                    return () => videoElement.removeEventListener('play', handlePlay);
+                }
+            } catch (error) {
+                console.error("Error initializing history:", error);
+            }
+        };
+
+        initializeHistory();
+        const startProgressTracking = () => {
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+            }
+
+            progressIntervalRef.current = setInterval(updateProgress, 10000);
+        };
+
+        const updateProgress = async () => {
+            if (!videoElement.duration) return;
+
+            const currentTime = videoElement.currentTime;
+            const duration = videoElement.duration;
+            const progressPercent = Math.min(Math.round((currentTime / duration) * 100), 100);
+            const isCompleted = progressPercent > 90;
+
+            try {
+                await HistoryService.updateHistory(user._id, mediaId, {
+                    progress: progressPercent,
+                    completed: isCompleted
+                });
+            } catch (error) {
+                console.error("Failed to update progress:", error);
+            }
+        };
+
+        videoElement.addEventListener('play', startProgressTracking);
+        videoElement.addEventListener('playing', startProgressTracking);
+        videoElement.addEventListener('pause', updateProgress);
+        videoElement.addEventListener('ended', updateProgress);
+
+        return () => {
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+            }
+
+            updateProgress();
+
+            videoElement.removeEventListener('play', startProgressTracking);
+            videoElement.removeEventListener('playing', startProgressTracking);
+            videoElement.removeEventListener('pause', updateProgress);
+            videoElement.removeEventListener('ended', updateProgress);
+        };
+    }, [user, mediaId, hlsUrl]);
 
     return (
         <div className="relative h-screen w-full bg-black">

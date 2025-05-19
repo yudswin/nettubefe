@@ -82,6 +82,8 @@ export interface LanguageContent {
     noCastAvailable: string
 
     browse: string
+    history: string
+    favorite: string
 }
 
 export const EN: LanguageContent = {
@@ -165,7 +167,9 @@ export const EN: LanguageContent = {
     notAvailable: 'Not Available',
     noCastAvailable: 'No cast information available',
 
-    browse: 'Browse'
+    browse: 'Browse',
+    history: 'History',
+    favorite: 'Favorite'
 };
 
 export const VI: LanguageContent = {
@@ -249,7 +253,9 @@ export const VI: LanguageContent = {
     notAvailable: 'Không có sẵn',
     noCastAvailable: 'Không có thông tin diễn viên',
 
-    browse: 'Duyệt Tìm'
+    browse: 'Duyệt Tìm',
+    history: 'Xem Tiếp',
+    favorite: 'Yêu Thích'
 };
 
 export const LANGUAGES = {

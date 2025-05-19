@@ -3,8 +3,7 @@ import ContentRow from '../components/ui/ContentRow'
 import Footer from '../components/layout/Footer'
 import { Sidebar } from '../components/layout/Sidebar'
 import { useEffect, useState } from 'react'
-import { useLanguage } from '../contexts/LanguageContext'
-import { LibraryContent } from './contents/LibraryContent'
+import HistoryContent from './contents/HistoryContent'
 import AdminContent from './contents/AdminContent'
 import SettingContent from './contents/SettingContent'
 import { Collection } from "../types/collection";
@@ -17,13 +16,13 @@ import { useNavigate } from 'react-router-dom'
 import TopicContentRow from '@components/user/TopicContentRow'
 import HeroHeadline from '@components/user/HeroHeadline'
 import LazyLoad from '@components/layout/LayzyLoad'
+import FavoriteContent from './contents/FavoriteContent'
 
 const HomeContent = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState<'home' | 'browse' | 'admin' | 'settings'>('home');
+    const [activeTab, setActiveTab] = useState<'home' | 'browse' | 'admin' | 'history' | 'favorite' | 'settings'>('home');
     const [selectedLibrary, setSelectedLibrary] = useState<number | null>(null);
     const [isAdmin] = useState(true);
-    const { t } = useLanguage();
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -210,6 +209,10 @@ const HomeContent = () => {
                         <SettingContent />
                     ) : activeTab === 'admin' ? (
                         <AdminContent />
+                    ) : activeTab === 'history' ? (
+                        <HistoryContent />
+                    ) : activeTab === 'favorite' ? (
+                        <FavoriteContent />
                     ) : (
                         <>
                             {isHeadlineLoading && <LoadingSpinner />}

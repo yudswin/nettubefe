@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 interface SidebarProps {
     isOpen: boolean;
     toggleSidebar: () => void;
-    activeTab: 'home' | 'browse' | 'admin' | 'settings';
-    onTabChange: (tab: 'home' | 'browse' | 'admin' | 'settings') => void;
+    activeTab: 'home' | 'browse' | 'admin' | 'history' | 'favorite' | 'settings';
+    onTabChange: (tab: 'home' | 'browse' | 'admin' | 'history' | 'favorite' | 'settings') => void;
     onSelectLibrary: (id: number) => void; // New prop for library selection
     selectedLibrary: number | null; // New prop to track selected library
     isAdmin?: boolean; // Admin state
@@ -103,6 +103,38 @@ export const Sidebar = ({
                                         <span>{t.browse}</span>
                                     </button>
                                 </li>
+
+                                {/* History Tab */}
+                                {user && (
+                                    <li className="mb-1">
+                                        <button
+                                            onClick={() => onTabChange('history')}
+                                            className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'history'
+                                                ? 'bg-gray-800 border-l-4 border-amber-500'
+                                                : 'hover:bg-gray-800'
+                                                }`}
+                                        >
+                                            <span className="mr-3">®️</span>
+                                            <span>{t.history}</span>
+                                        </button>
+                                    </li>
+                                )}
+
+                                {/* Favorite Tab */}
+                                {user && (
+                                    <li className="mb-1">
+                                        <button
+                                            onClick={() => onTabChange('favorite')}
+                                            className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'favorite'
+                                                ? 'bg-gray-800 border-l-4 border-amber-500'
+                                                : 'hover:bg-gray-800'
+                                                }`}
+                                        >
+                                            <span className="mr-3">❤️</span>
+                                            <span>{t.favorite}</span>
+                                        </button>
+                                    </li>
+                                )}
 
                                 {/* Settings Tab */}
                                 <li className={`mt-6 mb-1 ${user ? '' : 'hidden'}`}>

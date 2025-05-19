@@ -12,6 +12,8 @@ import { CountryService } from '@services/country.service';
 import { DirectorService } from '@services/director.service';
 import { LoadingSpinner } from '@components/feedback/LoadingSpinner';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@contexts/AuthContext';
+import { FavoriteService } from '@services/favorite.service';
 
 interface MovieDetailModalProps {
     contentId: string;
@@ -28,8 +30,11 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
     const [directorList, setDirectorList] = useState<Director[]>([]);
     const [genreList, setGenreList] = useState<Genre[]>([]);
     const [countryList, setCountryList] = useState<Country[]>([]);
-    const navigate = useNavigate()
-    
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
+    const navigate = useNavigate();
+    const { user } = useAuth();
+
     // Separate error states for different data types
     const [contentError, setContentError] = useState<string | null>(null);
     const [metadataErrors, setMetadataErrors] = useState<string[]>([]);
@@ -60,7 +65,6 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
         };
     }, [isOpen, onClose]);
 
-    // Handle click outside the modal
     const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
         const dialogDimensions = dialogRef.current?.getBoundingClientRect();
         if (
@@ -74,7 +78,6 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
         }
     };
 
-    // Reset states when modal opens
     useEffect(() => {
         if (isOpen) {
             setContentError(null);
@@ -94,8 +97,55 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
             fetchDirector();
             fetchGenre();
             fetchCountry();
+            checkFavoriteStatus();
         }
     }, [isOpen, contentId]);
+
+    useEffect(() => {
+        if (isOpen && contentId && user) {
+            checkFavoriteStatus();
+        }
+    }, [isOpen, contentId, user]);
+
+    const checkFavoriteStatus = async () => {
+        if (!user || !contentId) return;
+
+        try {
+            setIsFavoriteLoading(true);
+            const response = await FavoriteService.getFavorite(user._id, contentId);
+            setIsFavorite('data' in response && !!response.data);
+        } catch (error) {
+            console.error("Error checking favorite status:", error);
+        } finally {
+            setIsFavoriteLoading(false);
+        }
+    };
+
+    const handleToggleFavorite = async () => {
+        if (!user || !contentId) {
+            console.log("User must be logged in to favorite content");
+            return;
+        }
+
+        setIsFavoriteLoading(true);
+
+        try {
+            if (isFavorite) {
+                await FavoriteService.deleteFavorite(user._id, contentId);
+                setIsFavorite(false);
+            } else {
+                await FavoriteService.createFavorite({
+                    userId: user._id,
+                    contentId: contentId
+                });
+                setIsFavorite(true);
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+        } finally {
+            setIsFavoriteLoading(false);
+        }
+    };
 
     const fetchContent = async () => {
         try {
@@ -174,7 +224,7 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
         >
             <div className="modal-box bg-gray-900 w-11/12 max-w-5xl p-0 rounded-lg">
                 {isLoading && <LoadingSpinner />}
-                
+
                 {contentError && (
                     <div className="alert alert-error m-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,7 +233,7 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
                         <span>{contentError}</span>
                     </div>
                 )}
-                
+
                 {!isLoading && !contentError && content && (
                     <>
                         {/* Cover section */}
@@ -249,15 +299,35 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
                                         )}
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => navigate(`/movie/${content._id}`)}
-                                    className="btn btn-primary bg-amber-500 hover:bg-amber-600 border-none"
-                                >
-                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                                    </svg>
-                                    {t.play}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleToggleFavorite}
+                                        disabled={isFavoriteLoading}
+                                        className={`btn ${isFavorite ? 'btn-error' : 'btn-outline'} border-none`}
+                                        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                                    >
+                                        {isFavoriteLoading ? (
+                                            <span className="loading loading-spinner loading-sm"></span>
+                                        ) : isFavorite ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                            </svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                            </svg>
+                                        )}
+                                    </button>
+                                    <button
+                                        onClick={() => navigate(`/movie/${content._id}`)}
+                                        className="btn btn-primary bg-amber-500 hover:bg-amber-600 border-none"
+                                    >
+                                        <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                                        </svg>
+                                        {t.play}
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Genres */}
@@ -338,14 +408,14 @@ const MovieDetailModal = ({ contentId, isOpen, onClose }: MovieDetailModalProps)
                                     <div className="carousel carousel-center space-x-4 pb-2">
                                         {castList.map(person => (
                                             <div key={person.personId} className="carousel-item w-24 hover:cursor-pointer"
-                                            onClick={() => navigate(`/person/${person.personId}`)}
+                                                onClick={() => navigate(`/person/${person.personId}`)}
                                             >
                                                 <div className="flex flex-col items-center">
                                                     <div className="avatar mb-2">
                                                         <div className="w-24 h-24 rounded-full">
-                                                            <img 
-                                                                src={person.profilePath ? `https://media.themoviedb.org/${person.profilePath}` : '/defaultProfile.jpg'} 
-                                                                alt={person.character} 
+                                                            <img
+                                                                src={person.profilePath ? `https://media.themoviedb.org/${person.profilePath}` : '/defaultProfile.jpg'}
+                                                                alt={person.character}
                                                                 onError={(e) => {
                                                                     (e.target as HTMLImageElement).src = '/default-avatar.jpg';
                                                                 }}

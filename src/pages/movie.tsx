@@ -16,6 +16,8 @@ import { CastService } from '@services/cast.service';
 import { GenreService } from '@services/genre.service';
 import { CountryService } from '@services/country.service';
 import { DirectorService } from '@services/director.service';
+import { FavoriteService } from '@services/favorite.service';
+import { useAuth } from '@contexts/AuthContext';
 
 const movie = () => {
     const { contentId } = useParams<{ contentId: string }>();
@@ -28,6 +30,9 @@ const movie = () => {
     const [directorList, setDirectorList] = useState<Director[]>([]);
     const [genreList, setGenreList] = useState<Genre[]>([]);
     const [countryList, setCountryList] = useState<Country[]>([]);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
+    const { user } = useAuth();
 
     const [toast, setToast] = useState<{
         show: boolean;
@@ -86,6 +91,20 @@ const movie = () => {
             setIsMediaLoading(false);
         }
     }
+
+    const checkFavoriteStatus = async () => {
+        if (!user || !contentId) return;
+
+        try {
+            setIsFavoriteLoading(true);
+            const response = await FavoriteService.getFavorite(user._id, contentId);
+            setIsFavorite(response.status === 'success' && !!response.result);
+        } catch (error) {
+            console.error("Error checking favorite status:", error);
+        } finally {
+            setIsFavoriteLoading(false);
+        }
+    };
 
     const fetchCast = async () => {
         try {
@@ -191,7 +210,60 @@ const movie = () => {
         }
     }
 
+    const handleToggleFavorite = async () => {
+        if (!user || !contentId) {
+            setToast({
+                show: true,
+                message: 'You must be logged in to favorite content',
+                type: 'error'
+            });
+            return;
+        }
 
+        setIsFavoriteLoading(true);
+
+        try {
+            if (isFavorite) {
+                const response = await FavoriteService.deleteFavorite(user._id, contentId);
+                if (response.status === 'success') {
+                    setIsFavorite(false);
+                    setToast({
+                        show: true,
+                        message: 'Removed from favorites',
+                        type: 'success'
+                    });
+                }
+            } else {
+                const response = await FavoriteService.createFavorite({
+                    userId: user._id,
+                    contentId: contentId
+                });
+                if (response.status === 'success') {
+                    setIsFavorite(true);
+                    setToast({
+                        show: true,
+                        message: 'Added to favorites',
+                        type: 'success'
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+            setToast({
+                show: true,
+                message: 'Failed to update favorites',
+                type: 'error'
+            });
+        } finally {
+            setIsFavoriteLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (user && contentId) {
+            checkFavoriteStatus();
+        }
+    }, [user, contentId]);
 
     useEffect(() => {
         fetchContent();
@@ -258,6 +330,30 @@ const movie = () => {
                                                 </div>
                                             )}
                                         </div>
+                                        <button
+                                            onClick={handleToggleFavorite}
+                                            disabled={isFavoriteLoading}
+                                            className={`btn btn-sm my-2 ${isFavorite ? 'btn-error' : 'btn-outline'} gap-1`}
+                                            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                                        >
+                                            {isFavoriteLoading ? (
+                                                <span className="loading loading-spinner loading-xs"></span>
+                                            ) : isFavorite ? (
+                                                <>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                                    </svg>
+                                                    Favorited
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                                    </svg>
+                                                    Favorite
+                                                </>
+                                            )}
+                                        </button>
                                         <div className='flex flex-wrap gap-2 mb-2'>
                                             <span className='font-bold'>Country: </span>
                                             {countryList.map((country) => (
