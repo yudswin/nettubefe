@@ -34,7 +34,7 @@ const CreateContentModal = ({ isOpen, onClose, onContentCreated }: CreateContent
         message: string;
         type: 'success' | 'error';
     }>({ show: false, message: '', type: 'success' });
-    const [preview, setPreview] = useState<string>('');
+    const [, setPreview] = useState<string>('');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;

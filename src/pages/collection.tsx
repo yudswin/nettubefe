@@ -14,7 +14,7 @@ const collection = () => {
     const [collection, setCollection] = useState<Collection>()
     const [contentList, setContentList] = useState<Content[]>([]);
 
-    const [toast, setToast] = useState<{
+    const [, setToast] = useState<{
         show: boolean
         message: string
         type: 'success' | 'error'

@@ -12,7 +12,7 @@ interface ContentRowDisplayProps {
 
 const ContentRowDisplay = ({ collection }: ContentRowDisplayProps) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [contentList, setContentList] = useState<Content[]>([]);
+    const [, setContentList] = useState<Content[]>([]);
 
     const [toast, setToast] = useState<{
         show: boolean;

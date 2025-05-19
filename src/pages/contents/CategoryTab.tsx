@@ -9,7 +9,7 @@ import DepartmentTab from './DepartmentTab';
 
 const CategoryTab = () => {
     const [activeEntity, setActiveEntity] = useState<string>('genre');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, ] = useState(false);
     const [toast, setToast] = useState<{
         show: boolean;
         message: string;

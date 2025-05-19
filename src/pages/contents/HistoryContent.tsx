@@ -9,7 +9,7 @@ const HistoryContent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
     const [historyList, setHistoryList] = useState<History[]>([]);
-    const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const [, setIsDeleting] = useState<string | null>(null);
 
     const [toast, setToast] = useState<{
         show: boolean;

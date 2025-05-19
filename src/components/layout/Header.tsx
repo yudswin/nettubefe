@@ -68,7 +68,7 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
                 <LanguageSwitcher />
 
                 {/* User profile (hidden on mobile) */}
-                {!isAuth ?
+                {/* {!isAuth ?
                     // Auth Title
                     <>
                         <div className="hidden md:flex items-center ml-4">
@@ -99,7 +99,7 @@ const Header = ({ toggleSidebar, sidebarOpen }: HeaderProps) => {
                             <SignOutButton />
                         </div>
                     </>
-                }
+                } */}
             </div>
         </header >
     )

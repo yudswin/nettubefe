@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { ContentService, BrowseParams } from '../services/content.service';
 import { GenreService } from '../services/genre.service';
 import { CountryService } from '../services/country.service';
@@ -12,7 +12,6 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
 const browse = () => {
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

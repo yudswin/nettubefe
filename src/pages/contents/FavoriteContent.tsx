@@ -9,7 +9,6 @@ const FavoriteContent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuth();
     const [favoriteList, setFavoriteList] = useState<Favorite[]>([]);
-    const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
     const [toast, setToast] = useState<{
         show: boolean;
@@ -51,38 +50,38 @@ const FavoriteContent = () => {
         }
     };
 
-    const handleRemoveFromFavorites = async (contentId: string) => {
-        if (!user?._id) return;
+    // const handleRemoveFromFavorites = async (contentId: string) => {
+    //     if (!user?._id) return;
 
-        setIsDeleting(contentId);
-        try {
-            const response = await FavoriteService.deleteFavorite(user._id, contentId);
+    //     setIsDeleting(contentId);
+    //     try {
+    //         const response = await FavoriteService.deleteFavorite(user._id, contentId);
 
-            if (response.status === 'success') {
-                setFavoriteList(prev => prev.filter(item => item.contentId !== contentId));
-                setToast({
-                    show: true,
-                    message: 'Item removed from favorites',
-                    type: 'success'
-                });
-            } else {
-                setToast({
-                    show: true,
-                    message: response.error || 'Failed to remove from favorites',
-                    type: 'error'
-                });
-            }
-        } catch (error) {
-            setToast({
-                show: true,
-                message: 'Failed to connect to server',
-                type: 'error'
-            });
-            console.error(error);
-        } finally {
-            setIsDeleting(null);
-        }
-    };
+    //         if (response.status === 'success') {
+    //             setFavoriteList(prev => prev.filter(item => item.contentId !== contentId));
+    //             setToast({
+    //                 show: true,
+    //                 message: 'Item removed from favorites',
+    //                 type: 'success'
+    //             });
+    //         } else {
+    //             setToast({
+    //                 show: true,
+    //                 message: response.error || 'Failed to remove from favorites',
+    //                 type: 'error'
+    //             });
+    //         }
+    //     } catch (error) {
+    //         setToast({
+    //             show: true,
+    //             message: 'Failed to connect to server',
+    //             type: 'error'
+    //         });
+    //         console.error(error);
+    //     } finally {
+    //         setIsDeleting(null);
+    //     }
+    // };
 
     useEffect(() => {
         fetchUserFavorites();

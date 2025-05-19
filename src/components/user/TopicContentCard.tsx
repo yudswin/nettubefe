@@ -8,7 +8,7 @@ interface TopicContentCardProps {
     index: number
 }
 
-const TopicContentCard = ({ content, slug, index}: TopicContentCardProps) => {
+const TopicContentCard = ({ content }: TopicContentCardProps) => {
     const { t } = useLanguage();
     const navigate = useNavigate()
 

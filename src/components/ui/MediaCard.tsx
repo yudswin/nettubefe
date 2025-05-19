@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useLanguage } from '@contexts/LanguageContext';
 import { Content } from '../../types/content';
-import ContentModel from './ContentModel';
 import MovieDetailModal from './MovieDetailModal';
 
 interface MediaCardProps {
@@ -15,15 +14,10 @@ const MediaCard = ({ content, index, type }: MediaCardProps) => {
     const { t } = useLanguage();
 
 
-
     const handleCardClick = () => {
         setModalOpen(true);
     };
 
-    const handlePlay = () => {
-        console.log(`Playing ${content.title}`);
-        setModalOpen(false);
-    };
 
     const handleCloseModal = () => {
         setModalOpen(false);

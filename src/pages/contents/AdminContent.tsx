@@ -14,8 +14,8 @@ export interface EntityTab {
 const AdminContent = () => {
     // State management
     const [activeEntity, setActiveEntity] = useState<string>('movie');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isFullPageLoading, setIsFullPageLoading] = useState(false);
+    const [isLoading, ] = useState(false);
+    const [isFullPageLoading, ] = useState(false);
 
     const entities: EntityTab[] = [
         { id: 'movie', label: 'Content Management' },

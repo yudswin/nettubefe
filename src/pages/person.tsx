@@ -19,7 +19,7 @@ const person = () => {
     const [departmentList, setDepartmentList] = useState<Departments[]>([]);
 
 
-    const [toast, setToast] = useState<{
+    const [, setToast] = useState<{
         show: boolean
         message: string
         type: 'success' | 'error'

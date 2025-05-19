@@ -75,20 +75,18 @@ export const Sidebar = ({
                                 </li>
 
                                 {/* Admin Tab */}
-                                {user?.roles === 'admin' && (
-                                    <li className="mb-1">
-                                        <button
-                                            onClick={() => onTabChange('admin')}
-                                            className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'admin'
-                                                ? 'bg-gray-800 border-l-4 border-amber-500'
-                                                : 'hover:bg-gray-800'
-                                                }`}
-                                        >
-                                            <span className="mr-3">🛡️</span>
-                                            <span>{t.tabAdmin}</span>
-                                        </button>
-                                    </li>
-                                )}
+                                <li className="mb-1">
+                                    <button
+                                        onClick={() => onTabChange('admin')}
+                                        className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'admin'
+                                            ? 'bg-gray-800 border-l-4 border-amber-500'
+                                            : 'hover:bg-gray-800'
+                                            }`}
+                                    >
+                                        <span className="mr-3">🛡️</span>
+                                        <span>{t.tabAdmin}</span>
+                                    </button>
+                                </li>
 
                                 {/* Browse Tab */}
                                 <li className="mb-1">
@@ -105,7 +103,7 @@ export const Sidebar = ({
                                 </li>
 
                                 {/* History Tab */}
-                                {user && (
+                                {/* {user && (
                                     <li className="mb-1">
                                         <button
                                             onClick={() => onTabChange('history')}
@@ -118,10 +116,10 @@ export const Sidebar = ({
                                             <span>{t.history}</span>
                                         </button>
                                     </li>
-                                )}
+                                )} */}
 
                                 {/* Favorite Tab */}
-                                {user && (
+                                {/* {user && (
                                     <li className="mb-1">
                                         <button
                                             onClick={() => onTabChange('favorite')}
@@ -134,10 +132,10 @@ export const Sidebar = ({
                                             <span>{t.favorite}</span>
                                         </button>
                                     </li>
-                                )}
+                                )} */}
 
                                 {/* Settings Tab */}
-                                <li className={`mt-6 mb-1 ${user ? '' : 'hidden'}`}>
+                                {/* <li className={`mt-6 mb-1 ${user ? '' : 'hidden'}`}>
                                     <button
                                         onClick={() => onTabChange('settings')}
                                         className={`w-full text-left flex items-center px-4 py-3 rounded-md ${activeTab === 'settings'
@@ -148,7 +146,7 @@ export const Sidebar = ({
                                         <span className="mr-3">⚙️</span>
                                         <span>{t.tabSetting}</span>
                                     </button>
-                                </li>
+                                </li> */}
                             </ul>
                         </nav>
                         <div className='md:hidden flex flex-col'>

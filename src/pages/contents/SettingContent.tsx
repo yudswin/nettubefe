@@ -7,7 +7,7 @@ import { FullPageLoader } from "@components/feedback/FullPageLoader";
 const SettingContent = () => {
     const { info, user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
-    const [toast, setToast] = useState<{
+    const [, setToast] = useState<{
         show: boolean;
         message: string;
         type: 'success' | 'error';
