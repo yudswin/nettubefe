@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const apiClient = axios.create({
     baseURL: 'https://nettubebe.onrender.com/',
-    timeout: 10000,
+    timeout: 100000, // Render free lincense may delay the request up to 50 seconds
     headers: {
         'Content-Type': 'application/json',
     }
