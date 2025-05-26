@@ -1,16 +1,34 @@
-# NetTube Frontend
+<div align="center" class="text-center">
+<h1>NetTube</h1>
+<p><em>Streamline your video experience, effortlessly engage and explore.</em></p>
 
-This project is a frontend application built with React, TypeScript, and Vite for a video streaming platform.
+<img alt="last-commit" src="https://img.shields.io/github/last-commit/yudswin/nettubefe?style=flat&amp;logo=git&amp;logoColor=white&amp;color=0080ff" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="repo-top-language" src="https://img.shields.io/github/languages/top/yudswin/nettubefe?style=flat&amp;color=0080ff" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="repo-language-count" src="https://img.shields.io/github/languages/count/yudswin/nettubefe?style=flat&amp;color=0080ff" class="inline-block mx-1" style="margin: 0px 2px;">
+<p><em>Built with the tools and technologies:</em></p>
+<img alt="DaisyUI" src="https://img.shields.io/badge/DaisyUI-1AD1A5.svg?style=flat&amp;logo=DaisyUI&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="React" src="https://img.shields.io/badge/React-61DAFB.svg?style=flat&amp;logo=React&amp;logoColor=black" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=flat&amp;logo=TypeScript&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+</br>
+<img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF.svg?style=flat&amp;logo=Vite&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="ESLint" src="https://img.shields.io/badge/ESLint-4B32C3.svg?style=flat&amp;logo=ESLint&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+<img alt="Axios" src="https://img.shields.io/badge/Axios-5A29E4.svg?style=flat&amp;logo=Axios&amp;logoColor=white" class="inline-block mx-1" style="margin: 0px 2px;">
+</div>
 
 ## Project Overview
 
 NetTube is a video streaming application that allows users to browse, search, and watch videos online. The frontend is built with modern web technologies to provide a responsive and intuitive user experience.
 
 ### Key Features
-- User authentication and account management
-- Video browsing and searching
-- Video playback with HLS streaming
-- Responsive design for different devices
+This project aims to simplify the creation of engaging media platforms. The core features include:
+<ul class="list-disc pl-4 my-0">
+<li class="my-0">🎥 <strong>Dynamic User Interface:</strong> Provides a responsive design for seamless user interactions.</li>
+<li class="my-0">🔒 <strong>User Authentication:</strong> Ensures secure access with a robust authentication system.</li>
+<li class="my-0">🎬 <strong>Seamless Video Playback:</strong> Supports HLS streaming for smooth and uninterrupted viewing.</li>
+<li class="my-0">🛠️ <strong>Component-Based Architecture:</strong> Promotes maintainability and scalability through reusable components.</li>
+<li class="my-0">🎨 <strong>Tailored Styling with Tailwind CSS:</strong> Customizable design system for a cohesive visual identity.</li>
+<li class="my-0">⚡ <strong>Efficient Development Workflow:</strong> Optimized build process with Vite, enhancing developer productivity.</li>
+</ul>
 
 ## Technology Stack
 
